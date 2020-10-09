@@ -1,0 +1,22 @@
+﻿  Main.cpp
+C:\Users\Drew\source\repos\Project1\Main.cpp(170,97): warning C4244: 'argument': conversion from 'int' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+C:\Users\Drew\source\repos\Project1\Main.cpp(170,76): warning C4244: 'argument': conversion from 'int' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+C:\Users\Drew\source\repos\Project1\Main.cpp(179,100): warning C4244: 'argument': conversion from 'T' to 'float', possible loss of data
+          with
+          [
+              T=int
+          ]
+C:\Users\Drew\source\repos\Project1\Main.cpp(179,66): warning C4244: 'argument': conversion from 'T' to 'float', possible loss of data
+          with
+          [
+              T=int
+          ]
+  Project1.vcxproj -> C:\Users\Drew\source\repos\Project1\Debug\Project1.exe
