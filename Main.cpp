@@ -6,6 +6,9 @@ int main()
 
     window.setFramerateLimit(60);
 
+    sf::RectangleShape background(sf::Vector2f(720.f, 720.f));
+    background.setFillColor(sf::Color::Blue);
+
     sf::RectangleShape outerSquare(sf::Vector2f(620.f, 620.f));
     outerSquare.setFillColor(sf::Color::Transparent);
     outerSquare.setOutlineThickness(10.f);
@@ -46,7 +49,7 @@ int main()
     sf::CircleShape spot1(15.f);
     spot1.setPosition(sf::Vector2f(345.f, 30.f));
     spot1.setFillColor(sf::Color::Yellow);
-    
+
     sf::CircleShape spot2(15.f);
     spot2.setPosition(sf::Vector2f(345.f, 135.f));
     spot2.setFillColor(sf::Color::Yellow);
@@ -148,6 +151,10 @@ int main()
 
     sf::CircleShape white1(20.f);
     white1.setFillColor(sf::Color::White);
+    white1.setPosition(sf::Vector2f(360.f, 300.f));
+
+    sf::CircleShape black1(20.f);
+    white1.setFillColor(sf::Color::Black);
     white1.setPosition(sf::Vector2f(360.f, 360.f));
 
     //put in grid coordinates on the sides of the board a-g on left (y-axis) 1-7 on bottom (x-axis)
@@ -155,7 +162,8 @@ int main()
     //a.setString("A");
    // a.setPosition(sf::Vector2f(5.f, 660.f));
 
-    bool selected = false;
+    bool white1selected = false;
+    bool black1selected = false;
     while (window.isOpen())
     {
         sf::Event event;
@@ -163,24 +171,33 @@ int main()
         {
             //end loop when window closes
             if (event.type == sf::Event::Closed)
-                window.close(); 
+                window.close();
             //chnages origin of the moved dot to make dragging more intuitive on left click and releases dot when left click is released
             else if (sf::Event::MouseButtonPressed) {
                 if (event.mouseButton.button == sf::Mouse::Left) {
                     if (white1.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y)) {
                         white1.setOrigin(event.mouseButton.x - (white1.getPosition().x - white1.getOrigin().x),
                             event.mouseButton.y - (white1.getPosition().y - white1.getOrigin().y));
-                        selected = !selected;
+                        white1selected = !white1selected;
+                    }
+                    else if (black1.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y)) {
+                        black1.setOrigin(event.mouseButton.x - (black1.getPosition().x - black1.getOrigin().x),
+                            event.mouseButton.y - (black1.getPosition().y - black1.getOrigin().y));
+                        black1selected = !black1selected;
                     }
                 }
             }
             //moves the dot around when one has been selected
-            if (selected) {
+            if (white1selected) {
                 white1.setPosition(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y);
+            }
+            if (black1selected) {
+                black1.setPosition(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y);
             }
         }
 
         window.clear();
+        window.draw(background);
         window.draw(outerSquare);
         window.draw(middleSquare);
         window.draw(innerSquare);
@@ -213,6 +230,7 @@ int main()
         window.draw(spot23);
         window.draw(spot24);
         window.draw(white1);
+        window.draw(black1);
         //window.draw(a);
         window.display();
     }
