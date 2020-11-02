@@ -3,7 +3,7 @@
 
 void NineManGame::runWindow() {
 	BackendBoard backend = BackendBoard();	// create object for backend logic handling
-	window.create(sf::VideoMode(550, 550), "9 Men's Morris");
+	window.create(sf::VideoMode(574, 574), "9 Men's Morris");
 
 	window.setFramerateLimit(60);
 
@@ -34,9 +34,11 @@ void NineManGame::runWindow() {
 			}
 			else if (event.type == sf::Event::MouseButtonReleased) {
 				if (event.mouseButton.button == sf::Mouse::Left) {
-					selected = !selected;		// stop dragging piece on mouse release
-												// function calls to check for valid position
-					backend.printBoard();		// print updated backend board for console logging
+					if (white1.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y)) {
+						selected = !selected;		// stop dragging piece on mouse release
+													// function calls to check for valid position
+						backend.printBoard();		// print updated backend board for console logging
+					}
 				}
 			}
 
@@ -61,7 +63,7 @@ void NineManGame::drawBoard(std::string imageDirectory)
 		std::cerr << "Error\n";
 	}
 	bSprite.setTexture(bTexture);
-	//bSprite.setPosition(sf::Vector2f(35.f, 35.f));
+	bSprite.setPosition(sf::Vector2f(12.f, 12.f));
 
 
 }
