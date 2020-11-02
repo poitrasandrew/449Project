@@ -40,28 +40,28 @@ void NineManGame::runWindow() {
 				}
 			}
 
-				//moves the dot around when one has been selected
-				if (selected) {
-					white1.setPosition(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y);
-				}
+			//moves the dot around when one has been selected
+			if (selected) {
+				white1.setPosition(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y);
 			}
-			window.clear();
-			drawBoard("board.png");
-			window.draw(bSprite);
-			window.draw(white1);
-			window.display();
 		}
-		return;
+		window.clear();
+		drawBoard("board.png");
+		window.draw(bSprite);
+		window.draw(white1);
+		window.display();
 	}
+	return;
+}
 
 void NineManGame::drawBoard(std::string imageDirectory)
 {
-    if (!bTexture.loadFromFile(imageDirectory))
-    {
-        std::cerr << "Error\n";
-    }
-    bSprite.setTexture(bTexture);
-    //bSprite.setPosition(sf::Vector2f(35.f, 35.f));
+	if (!bTexture.loadFromFile(imageDirectory))
+	{
+		std::cerr << "Error\n";
+	}
+	bSprite.setTexture(bTexture);
+	//bSprite.setPosition(sf::Vector2f(35.f, 35.f));
 
 
 }

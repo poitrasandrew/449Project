@@ -1,0 +1,25 @@
+﻿  BackendBoard.cpp
+  Main.cpp
+  NineManGame.cpp
+C:\Users\Drew\source\repos\9MansMorris\NineManGame.cpp(28,82): warning C4244: 'argument': conversion from 'int' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+C:\Users\Drew\source\repos\9MansMorris\NineManGame.cpp(28,61): warning C4244: 'argument': conversion from 'int' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+C:\Users\Drew\source\repos\9MansMorris\NineManGame.cpp(45,88): warning C4244: 'argument': conversion from 'T' to 'float', possible loss of data
+          with
+          [
+              T=int
+          ]
+C:\Users\Drew\source\repos\9MansMorris\NineManGame.cpp(45,54): warning C4244: 'argument': conversion from 'T' to 'float', possible loss of data
+          with
+          [
+              T=int
+          ]
+  Generating Code...
+  9MansMorris.vcxproj -> C:\Users\Drew\source\repos\9MansMorris\Debug\9MansMorris.exe

@@ -1,0 +1,2 @@
+C:\Users\Drew\source\repos\9MansMorris\Debug\9MansMorris.exe
+C:\Users\Drew\source\repos\9MansMorris\Debug\9MansMorris.pdb

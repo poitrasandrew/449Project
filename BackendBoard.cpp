@@ -12,7 +12,7 @@ bool BackendBoard::formsMill(int startRow, int startCol, int player) {
 	int result;					// stores result from each individual direction check
 	int millCount = 1;			// used to count number of pieces "in line" of the same player, if it equals 3,
 								// there is a mill. Initialized to 1 to include current piece.
-	
+
 	if (player == NineManGame::WHITE) {		// denote opposite player for array traversal
 		oppPlayer = NineManGame::BLACK;
 	}
@@ -49,7 +49,7 @@ bool BackendBoard::formsMill(int startRow, int startCol, int player) {
 	return false;
 }
 
-int BackendBoard::millDirectionCheck(int i, int j, int &millCount, int player, int oppPlayer) {
+int BackendBoard::millDirectionCheck(int i, int j, int& millCount, int player, int oppPlayer) {
 	// check if position in question contains a piece that can be used in player's mill
 
 	if ((i == 3) && (j == 3)) {					// avoid crossing middle - impossible mill
