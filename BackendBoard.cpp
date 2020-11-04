@@ -12,7 +12,7 @@ bool BackendBoard::formsMill(int startRow, int startCol, int player) {
 	int result;					// stores result from each individual direction check
 	int millCount = 1;			// used to count number of pieces "in line" of the same player, if it equals 3,
 								// there is a mill. Initialized to 1 to include current piece.
-
+	
 	if (player == NineManGame::WHITE) {		// denote opposite player for array traversal
 		oppPlayer = NineManGame::BLACK;
 	}
@@ -49,7 +49,7 @@ bool BackendBoard::formsMill(int startRow, int startCol, int player) {
 	return false;
 }
 
-int BackendBoard::millDirectionCheck(int i, int j, int& millCount, int player, int oppPlayer) {
+int BackendBoard::millDirectionCheck(int i, int j, int &millCount, int player, int oppPlayer) {
 	// check if position in question contains a piece that can be used in player's mill
 
 	if ((i == 3) && (j == 3)) {					// avoid crossing middle - impossible mill
@@ -63,6 +63,56 @@ int BackendBoard::millDirectionCheck(int i, int j, int& millCount, int player, i
 		return -1;
 	}
 	return 0;								// no action, but keep searching
+}
+
+bool BackendBoard::canRemove(Piece &piece) {
+	// if in mill, only remove if all others in mill  TODO
+}
+
+bool BackendBoard::isValidMove(int origRow, int origCol, int newRow, int newCol) {
+	// check if empty
+	if (board[newRow][newCol] != 0) {
+		return false;
+	}
+
+	// check if diagonal
+	if ((origRow != newRow) && (origCol != newCol)) {
+		return false;
+	}
+
+	int i = origRow;
+	int j = origCol;
+
+	// check if adjacent - two spaces are adjacent if there are only invalid spaces between them, except (3,3)
+	// row check
+	while (newRow < i) {
+		i--;
+		if (board[i][origCol] != -1 || (i == 3 && origCol == 3)) {
+			return false;
+		}
+	}
+	i = origRow;		// reset row index
+	while (newRow > i) {
+		i++;
+		if (board[i][origCol] != -1 || (i == 3 && origCol == 3)) {
+			return false;
+		}
+	}
+	// column check
+	while (newCol < j) {
+		j--;
+		if (board[origRow][j] != -1 || (origRow == 3 && j == 3)) {
+			return false;
+		}
+	}
+	j = origCol;  // reset column index
+	while (newCol > j) {
+		j++;
+		if (board[origRow][j] != -1 || (origRow == 3 && j == 3)) {
+			return false;
+		}
+	}
+	return true;
 }
 
 void BackendBoard::printBoard() {		//utility function to visualize backend logic "board"
