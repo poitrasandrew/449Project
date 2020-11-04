@@ -12,7 +12,13 @@ void NineManGame::runWindow() {
 	white1.setFillColor(sf::Color::White);
 	white1.setPosition(sf::Vector2f(360.f, 360.f));
 
-	bool selected = false;
+	bool selected = false;				// track which piece is selected
+	bool isPlacementPhase = true;		// track initial game phase
+	bool removalPhase = false;			// track if a player can remove an opponent's piece
+	int turn;							// track turn
+
+	// set initial turn from player input (use WHITE/BLACK constants from class header file)
+
 	while (window.isOpen())
 	{
 		sf::Event event;
@@ -25,10 +31,12 @@ void NineManGame::runWindow() {
 			//chnages origin of the moved dot to make dragging more intuitive on left click
 			else if (event.type == sf::Event::MouseButtonPressed) {
 				if (event.mouseButton.button == sf::Mouse::Left) {
-					if (white1.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y)) {
+					if (turn == WHITE && white1.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y)) {
 						white1.setOrigin(event.mouseButton.x - (white1.getPosition().x - white1.getOrigin().x),
 							event.mouseButton.y - (white1.getPosition().y - white1.getOrigin().y));
 						selected = !selected;
+					}
+					else if (turn == BLACK) { // handle black piece movement}
 					}
 				}
 			}
@@ -36,7 +44,47 @@ void NineManGame::runWindow() {
 				if (event.mouseButton.button == sf::Mouse::Left) {
 					if (white1.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y)) {
 						selected = !selected;		// stop dragging piece on mouse release
-													// function calls to check for valid position
+						/* Function calls:
+							1. Check if valid position (adjust coordinates to closest position, convert to array ints to check)
+								-If not, reset piece
+							2. Check game phase
+							3. If placement phase, check if valid placement (empty), decrement piece counter
+							4. If movement phase, check if valid move (empty/adjacent)
+								- If so, update piece class coordinates with valid pos.
+							5. Check for a mill after step 3 or 4
+							6. If mill, click to remove opponent piece (all non-mill pieces removed first)
+							7. Check game ending conditions.
+							8. If one is <3, declare winner, end game
+							9. If one has no valid moves, end game
+							10. Display game results
+						*/
+
+
+						/* valid move check
+						// adjust current origin coordinates to nearest point, get respective backend coordinates
+						// waiting on GUI to board coordinate translation
+
+						if (!isPlacementPhase) {
+							if (backend.isValidMove(white.getBoardRow(), white.getBoardCol(), NEWROW, NEWCOL)) {
+								board[NEWROW][NEWCOL] = WHITE;
+								board[white.getBoardRow()][white.getBoardCol()] = EMPTY;
+								white.setCoordinates(NEWX, NEWY);
+								white.setOrigin(NEWX, NEWY);
+							}
+							else {
+								white.setOrigin(white.getX(), white.getY());  // reset piece to original position if invalid move
+							}
+						}
+						*/
+
+						/* mill check
+						if (backend.formsMill(white.getBoardRow(), white.getBoardCol())) {
+							removalPhase = true;
+						} 
+							don't change turn until removal complete - need to implement click to choose
+							using canRemove() function
+						*/ 
+
 						backend.printBoard();		// print updated backend board for console logging
 					}
 				}
