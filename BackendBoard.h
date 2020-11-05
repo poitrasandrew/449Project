@@ -1,12 +1,13 @@
 #pragma once
-#include "Piece.h"
+//#include "Piece.h"
 
 class BackendBoard {
 public:
 	bool formsMill(int startRow, int startCol, int player);
 	int millDirectionCheck(int i, int j, int &millCount, int player, int oppPlayer);
-	bool canRemove(Piece &piece); 
+	// bool canRemove(Piece &piece); 
 	bool isValidMove(int origRow, int origCol, int newRow, int newCol);
+	void updateBoard(int row, int col, int val);
 	void printBoard();
 	BackendBoard();
 	~BackendBoard();

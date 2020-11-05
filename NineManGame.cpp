@@ -18,6 +18,7 @@ void NineManGame::runWindow() {
 	int turn;							// track turn
 
 	// set initial turn from player input (use WHITE/BLACK constants from class header file)
+	turn = WHITE;
 
 	while (window.isOpen())
 	{
