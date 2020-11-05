@@ -59,15 +59,16 @@ int BackendBoard::millDirectionCheck(int i, int j, int &millCount, int player, i
 		millCount++;
 		return 1;
 	}
-	else if (board[i][j] == oppPlayer) {	// stop searching that direction if opposite player's piece is in way
-		return -1;
+	else if (board[i][j] == oppPlayer || board[i][j] == NineManGame::EMPTY) {	
+											// stop searching that direction if opposite
+		return -1;							// player's piece or empty space is in way
 	}
 	return 0;								// no action, but keep searching
 }
 
-bool BackendBoard::canRemove(Piece &piece) {
-	// if in mill, only remove if all others in mill  TODO
-}
+/* bool BackendBoard::canRemove(Piece &piece) {
+	// if in mill, only remove if all others in mill  TODO 
+} */
 
 bool BackendBoard::isValidMove(int origRow, int origCol, int newRow, int newCol) {
 	// check if empty
@@ -85,34 +86,34 @@ bool BackendBoard::isValidMove(int origRow, int origCol, int newRow, int newCol)
 
 	// check if adjacent - two spaces are adjacent if there are only invalid spaces between them, except (3,3)
 	// row check
-	while (newRow < i) {
-		i--;
+	while (newRow < --i) {
 		if (board[i][origCol] != -1 || (i == 3 && origCol == 3)) {
 			return false;
 		}
 	}
 	i = origRow;		// reset row index
-	while (newRow > i) {
-		i++;
+	while (newRow > ++i) {
 		if (board[i][origCol] != -1 || (i == 3 && origCol == 3)) {
 			return false;
 		}
 	}
 	// column check
-	while (newCol < j) {
-		j--;
+	while (newCol < --j) {
 		if (board[origRow][j] != -1 || (origRow == 3 && j == 3)) {
 			return false;
 		}
 	}
 	j = origCol;  // reset column index
-	while (newCol > j) {
-		j++;
+	while (newCol > ++j) {
 		if (board[origRow][j] != -1 || (origRow == 3 && j == 3)) {
 			return false;
 		}
 	}
 	return true;
+}
+
+void BackendBoard::updateBoard(int row, int col, int val) {
+	board[row][col] = val;
 }
 
 void BackendBoard::printBoard() {		//utility function to visualize backend logic "board"
