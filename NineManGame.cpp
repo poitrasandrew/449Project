@@ -1,6 +1,13 @@
 #include "NineManGame.h"
 #include "BackendBoard.h"
 
+std::string NineManGame::getcolorString(int i) {
+	if (i == WHITE) {
+		return "White";
+	}
+	else { return "Black"; }
+}
+
 void NineManGame::runWindow() {
 	BackendBoard backend = BackendBoard();	// create object for backend logic handling
 	window.create(sf::VideoMode(574, 574), "9 Men's Morris");
@@ -15,6 +22,7 @@ void NineManGame::runWindow() {
 	bool selected = false;				// track which piece is selected
 	bool isPlacementPhase = true;		// track initial game phase
 	bool removalPhase = false;			// track if a player can remove an opponent's piece
+	bool gameOver = false;				// track when game ends
 	int turn;							// track turn
 
 	// set initial turn from player input (use WHITE/BLACK constants from class header file)
@@ -22,6 +30,15 @@ void NineManGame::runWindow() {
 
 	while (window.isOpen())
 	{
+		/* Game over check, need piece vectors to get piece count
+		if (turn == WHITE && isLoser(WHITEVECTOR.SIZE(), turn)) {
+			// white loses, end game, show results
+		}
+		else if (turn == BLACK && isLoser(BLACKVECTOR.SIZE(), turn)) {
+			// black loses, end game, show results
+		}
+		*/
+
 		sf::Event event;
 		while (window.pollEvent(event))
 		{
@@ -55,8 +72,8 @@ void NineManGame::runWindow() {
 							5. Check for a mill after step 3 or 4
 							6. If mill, click to remove opponent piece (all non-mill pieces removed first)
 							7. Check game ending conditions.
-							8. If one is <3, declare winner, end game
-							9. If one has no valid moves, end game
+							8. If one is <3, declare winner, end game (checked at beginning of loop)
+							9. If one has no valid moves, end game (checked at beginning of loop)
 							10. Display game results
 						*/
 
@@ -85,7 +102,6 @@ void NineManGame::runWindow() {
 							don't change turn until removal complete - need to implement click to choose
 							using canRemove() function
 						*/ 
-
 						backend.printBoard();		// print updated backend board for console logging
 					}
 				}

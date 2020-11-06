@@ -23,13 +23,19 @@ bool BackendBoard::formsMill(int startRow, int startCol, int player) {
 	while (--i >= NineManGame::ROWMIN) {	// check upwards
 		result = millDirectionCheck(i, startCol, millCount, player, oppPlayer);	// check if position adds to mill
 		if (result < 0) { break; }							// break if mill is impossible in that direction
-		if (millCount == 3) { return true; }
+		if (millCount == 3) { 
+			std::cout << "Mill formed by piece at (" << startRow << ", " << startCol << ")" << std::endl;
+			return true; 
+		}
 	}
 	i = startRow;			// reset row position
 	while (++i < NineManGame::ROWMAX) {	// check downwards
 		result = millDirectionCheck(i, startCol, millCount, player, oppPlayer);	// check if position adds to mill
 		if (result < 0) { break; }							// break if mill is impossible in that direction
-		if (millCount == 3) { return true; }
+		if (millCount == 3) {
+			std::cout << "Mill formed by piece at (" << startRow << ", " << startCol << ")" << std::endl;
+			return true;
+		}
 	}
 
 	millCount = 1;			// reset millCount for search in other direction
@@ -38,14 +44,21 @@ bool BackendBoard::formsMill(int startRow, int startCol, int player) {
 	while (--j >= NineManGame::COLMIN) {	// check leftwards
 		result = millDirectionCheck(startRow, j, millCount, player, oppPlayer);	// check if position adds to mill
 		if (result < 0) { break; }							// break if mill is impossible in that direction
-		if (millCount == 3) { return true; }
+		if (millCount == 3) {
+			std::cout << "Mill formed by piece at (" << startRow << ", " << startCol << ")" << std::endl;
+			return true;
+		}
 	}
 	j = startCol;			// reset column position
 	while (++j < NineManGame::COLMAX) {	// check rightwards
 		result = millDirectionCheck(startRow, j, millCount, player, oppPlayer);	// check if position adds to mill
 		if (result < 0) { break; }							// break if mill is impossible in that direction
-		if (millCount == 3) { return true; }
+		if (millCount == 3) {
+			std::cout << "Mill formed by piece at (" << startRow << ", " << startCol << ")" << std::endl;
+			return true;
+		}
 	}
+	std::cout << "No mill formed by piece at (" << startRow << ", " << startCol << ")" << std::endl;
 	return false;
 }
 
@@ -73,11 +86,15 @@ int BackendBoard::millDirectionCheck(int i, int j, int &millCount, int player, i
 bool BackendBoard::isValidMove(int origRow, int origCol, int newRow, int newCol) {
 	// check if empty
 	if (board[newRow][newCol] != 0) {
+		std::cout << "Invalid Move (" << origRow << ", " << origCol << ") to ("
+			<< newRow << ", " << newCol << "): Destination is not empty." << std::endl;
 		return false;
 	}
 
 	// check if diagonal
 	if ((origRow != newRow) && (origCol != newCol)) {
+		std::cout << "Invalid Move (" << origRow << ", " << origCol << ") to ("
+			<< newRow << ", " << newCol << "): Path is diagonal." << std::endl;
 		return false;
 	}
 
@@ -88,36 +105,50 @@ bool BackendBoard::isValidMove(int origRow, int origCol, int newRow, int newCol)
 	// row check
 	while (newRow < --i) {
 		if (board[i][origCol] != -1 || (i == 3 && origCol == 3)) {
+			std::cout << "Invalid Move (" << origRow << ", " << origCol << ") to ("
+				<< newRow << ", " << newCol << "): Impossible vertical move." << std::endl;
 			return false;
 		}
 	}
 	i = origRow;		// reset row index
 	while (newRow > ++i) {
 		if (board[i][origCol] != -1 || (i == 3 && origCol == 3)) {
+			std::cout << "Invalid Move (" << origRow << ", " << origCol << ") to ("
+				<< newRow << ", " << newCol << "): Impossible vertical move." << std::endl;
 			return false;
 		}
 	}
 	// column check
 	while (newCol < --j) {
 		if (board[origRow][j] != -1 || (origRow == 3 && j == 3)) {
+			std::cout << "Invalid Move (" << origRow << ", " << origCol << ") to ("
+				<< newRow << ", " << newCol << "): Impossible horizontal move." << std::endl;
 			return false;
 		}
 	}
 	j = origCol;  // reset column index
 	while (newCol > ++j) {
 		if (board[origRow][j] != -1 || (origRow == 3 && j == 3)) {
+			std::cout << "Invalid Move (" << origRow << ", " << origCol << ") to ("
+				<< newRow << ", " << newCol << "): Impossible horizontal move." << std::endl;
 			return false;
 		}
 	}
+	std::cout << "Valid Move (" << origRow << ", " << origCol << ") to ("
+		<< newRow << ", " << newCol << ")" << std::endl;
 	return true;
 }
 
 bool BackendBoard::isLoser(int pieceCount, int player) {
 	if (pieceCount < 3) {			// player loses if piece count is less than 3
+		std::cout << NineManGame::getcolorString(player) << "loses: has less than pieces left."
+			<< std::endl;
 		return true;
 	}
 
 	if (pieceCount == 3) {			// player can fly, so there is an empty spot on the board to move to
+		std::cout << NineManGame::getcolorString(player) << "has not lost yet: can fly."
+			<< std::endl;
 		return false;
 	}
 
@@ -126,12 +157,15 @@ bool BackendBoard::isLoser(int pieceCount, int player) {
 		for (int j = 0; j < NineManGame::COLMAX; j++) {
 			if (board[i][j] == player) {
 				if (!loserDirectionCheck(i, j)) {
+					std::cout << NineManGame::getcolorString(player) << "has not lost yet: "
+						"can make a valid move ( " << i << ", " << j << ")." << std::endl;
 					return false;		// if there is a valid move in that direction, player is not a loser
 				}
 			}
 		}
 	}
-
+	std::cout << NineManGame::getcolorString(player) << "loses: no valid moves left."
+		<< std::endl;
 	return true;
 }
 
