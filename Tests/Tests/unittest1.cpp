@@ -192,4 +192,107 @@ namespace Tests
 			Assert::IsFalse(backend.isValidMove(1, 5, 2, 4));
 		}
 	};
+
+	TEST_CLASS(isLoserTests)
+	{
+		// single piece test methods assume other pieces on board are blocked as well
+		// assumes piece count given by caller method
+		// method should return false if a valid move is not available (player is not a loser)
+	public:
+		BackendBoard backend;
+		TEST_METHOD_INITIALIZE(setUp)
+		{
+			backend = BackendBoard();
+		}
+
+		TEST_METHOD(LoserTestU)
+		{
+			// test if player is loser when there is an valid move above a piece
+			backend.updateBoard(3, 0, NineManGame::WHITE);
+			backend.updateBoard(6, 0, NineManGame::BLACK);
+			backend.updateBoard(3, 1, NineManGame::BLACK);
+			Assert::IsFalse(backend.isLoser(4, NineManGame::WHITE));
+		}
+		TEST_METHOD(LoserTestB)
+		{
+			// test if player is loser when there is an valid move below a piece
+			backend.updateBoard(1, 5, NineManGame::WHITE);
+			backend.updateBoard(1, 3, NineManGame::BLACK);
+			Assert::IsFalse(backend.isLoser(6, NineManGame::WHITE));
+		}
+		TEST_METHOD(LoserTestL)
+		{
+			// test if player is loser when there is an valid move to the left of a piece
+			backend.updateBoard(5, 3, NineManGame::BLACK);
+			backend.updateBoard(4, 3, NineManGame::WHITE);
+			backend.updateBoard(6, 3, NineManGame::WHITE);
+			backend.updateBoard(5, 5, NineManGame::WHITE);
+			Assert::IsFalse(backend.isLoser(5, NineManGame::BLACK));
+		}
+		TEST_METHOD(LoserTestR)
+		{
+			// test if player is loser when there is an valid move to the right of a piece
+			backend.updateBoard(1, 3, NineManGame::BLACK);
+			backend.updateBoard(1, 1, NineManGame::WHITE);
+			backend.updateBoard(2, 3, NineManGame::WHITE);
+			backend.updateBoard(0, 3, NineManGame::WHITE);
+			Assert::IsFalse(backend.isLoser(7, NineManGame::BLACK));
+		}
+		TEST_METHOD(LoserTestNone)
+		{
+			// test if player is loser when there are no valid moves for a piece
+			backend.updateBoard(4, 3, NineManGame::WHITE);
+			backend.updateBoard(4, 2, NineManGame::BLACK);
+			backend.updateBoard(4, 4, NineManGame::BLACK);
+			backend.updateBoard(5, 3, NineManGame::BLACK);
+			Assert::IsTrue(backend.isLoser(8, NineManGame::WHITE));
+		}
+		TEST_METHOD(LoserTestSet1)
+		{
+			// test if player is loser when there are no valid moves for a set of pieces
+			backend.updateBoard(6, 0, NineManGame::BLACK);
+			backend.updateBoard(2, 4, NineManGame::BLACK);
+			backend.updateBoard(3, 4, NineManGame::BLACK);
+			backend.updateBoard(5, 3, NineManGame::BLACK);
+
+			backend.updateBoard(6, 3, NineManGame::WHITE);
+			backend.updateBoard(3, 0, NineManGame::WHITE);
+			backend.updateBoard(2, 3, NineManGame::WHITE);
+			backend.updateBoard(3, 5, NineManGame::WHITE);
+			backend.updateBoard(4, 4, NineManGame::WHITE);
+			backend.updateBoard(5, 1, NineManGame::WHITE);
+			backend.updateBoard(4, 3, NineManGame::WHITE);
+			backend.updateBoard(5, 5, NineManGame::WHITE);
+
+			Assert::IsTrue(backend.isLoser(4, NineManGame::BLACK));
+		}
+		TEST_METHOD(LoserTestSet2)
+		{
+			// test if player is loser when there is a valid move for at least one of their pieces
+			backend.updateBoard(1, 3, NineManGame::WHITE);
+			backend.updateBoard(0, 6, NineManGame::WHITE);
+			backend.updateBoard(3, 6, NineManGame::WHITE);
+			backend.updateBoard(6, 3, NineManGame::WHITE);
+			backend.updateBoard(6, 6, NineManGame::WHITE);
+
+			backend.updateBoard(0, 3, NineManGame::BLACK);
+			backend.updateBoard(2, 3, NineManGame::BLACK);
+			backend.updateBoard(1, 1, NineManGame::BLACK);
+			backend.updateBoard(5, 1, NineManGame::BLACK);
+			backend.updateBoard(3, 5, NineManGame::BLACK);
+
+
+			Assert::IsFalse(backend.isLoser(5, NineManGame::WHITE));
+		}
+		TEST_METHOD(LoserTestLow)
+		{
+			// test if player is loser when they have less than three pieces on the board
+			Assert::IsTrue(backend.isLoser(2, NineManGame::WHITE));
+		}
+		TEST_METHOD(LoserTestFly)
+		{
+			// test if player is loser when they have the ability to fly
+			Assert::IsFalse(backend.isLoser(3, NineManGame::BLACK));
+		}
+	};
 }
