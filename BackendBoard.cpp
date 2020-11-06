@@ -112,8 +112,77 @@ bool BackendBoard::isValidMove(int origRow, int origCol, int newRow, int newCol)
 	return true;
 }
 
+bool BackendBoard::isLoser(int pieceCount, int player) {
+	if (pieceCount < 3) {			// player loses if piece count is less than 3
+		return true;
+	}
+
+	if (pieceCount == 3) {			// player can fly, so there is an empty spot on the board to move to
+		return false;
+	}
+
+	// check if any valid moves available
+	for (int i = 0; i < NineManGame::ROWMAX; i++) {
+		for (int j = 0; j < NineManGame::COLMAX; j++) {
+			if (board[i][j] == player) {
+				if (!loserDirectionCheck(i, j)) {
+					return false;		// if there is a valid move in that direction, player is not a loser
+				}
+			}
+		}
+	}
+
+	return true;
+}
+
+bool BackendBoard::loserDirectionCheck(int startRow, int startCol) {
+	// checks each direction for nearest point (first adjacent in given direction)
+	// and returns false if a piece can be moved to that point (since a valid move exists, not a loser)
+	int i = startRow;
+	int j = startCol;
+
+	while (--i >= NineManGame::ROWMIN) {	// check upwards
+		if (board[i][startCol] != -1) {
+			if (isValidMove(startRow, startCol, i, startCol)) {
+				return false;
+			}
+			else { break; }			// stop searching if move is invalid, no moves that direction
+		}
+	}
+	i = startRow;							// reset row index
+	while (++i < NineManGame::ROWMAX) {		// check downwards
+		if (board[i][startCol] != -1) {
+			if (isValidMove(startRow, startCol, i, startCol)) {
+				return false;
+			}
+			else { break; }
+		}
+	}
+	while (--j >= NineManGame::COLMIN) {	// check leftwards
+		if (board[startRow][j] != -1) {
+			if (isValidMove(startRow, startCol, startRow, j)) {
+				return false;
+			}
+			else { break; }
+		}
+	}
+	j = startCol;							// reset col index
+	while (++j < NineManGame::COLMAX) {		// check rightwards
+		if (board[startRow][j] != -1) {
+			if (isValidMove(startRow, startCol, startRow, j)) {
+				return false;
+			}
+			else { break; }
+		}
+	}
+
+	
+	return true;			// if no valid moves, player is loser
+}
+
 void BackendBoard::updateBoard(int row, int col, int val) {
 	board[row][col] = val;
+	std::cout << "Position Updated: row: " << row << ", column: " << col << " is now " << val << std::endl;
 }
 
 void BackendBoard::printBoard() {		//utility function to visualize backend logic "board"
