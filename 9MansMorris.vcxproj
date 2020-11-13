@@ -146,11 +146,13 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="NineManGame.cpp" />
     <ClCompile Include="Piece.cpp" />
+    <ClCompile Include="StartWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BackendBoard.h" />
     <ClInclude Include="NineManGame.h" />
     <ClInclude Include="Piece.h" />
+    <ClInclude Include="StartWindow.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="board.png" />
