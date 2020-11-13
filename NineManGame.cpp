@@ -186,36 +186,36 @@ void NineManGame::runWindow() {
 								/*
 								if (!isRemovalPhase) {		// if removal phase, do not process as piece movement
 								// TODO convert current GUI coordinates to backend board coordinates and
-								// store in temp coordinates of piece -- white[i].setTempCoordinates(x, y)
+								// store in temp coordinates of piece -- black[i].setTempCoordinates(x, y)
 
-								if (!backend.isvalidPosition(white[i].getTempRow(), white[i].getTempCol())) {
+								if (!backend.isvalidPosition(black[i].getTempRow(), black[i].getTempCol())) {
 								// TODO reset piece coordinates
 								break;
 								}
 
 								if (isPlacementPhase) {
-								if (!backend.isValidPlacement(white[i].getTempRow(), white[i].getTempCol()) {
+								if (!backend.isValidPlacement(black[i].getTempRow(), black[i].getTempCol()) {
 								// reset piece coordinates
 								break;
 								}
 								else {
 								// TODO update piece coordinates by passing the GUI coordinates to
-								// white[i].setCoordinates(x, y)
-								whitePlaceCounter--;
+								// black[i].setCoordinates(x, y)
+								blackPlaceCounter--;
 								}
 								}
 								else {
-								if(!backend.isValidMove(white[i].getRow(), white[i].getCol(), white[i].getTempRow(), white[i].getTempCol()) {
+								if(!backend.isValidMove(black[i].getRow(), black[i].getCol(), black[i].getTempRow(), black[i].getTempCol()) {
 								//reset piece coordinates
 								break;
 								}
 								else {
 								// TODO update piece coordinates by passing the GUI coordinates to
-								// white[i].setCoordinates(x, y)
+								// black[i].setCoordinates(x, y)
 								}
 								}
 
-								if (formsMill(white[i].getRow(), white[i].getCol(), WHITE) {
+								if (formsMill(black[i].getRow(), black[i].getCol(), BLACK) {
 								removalPhase = true;
 								backend.printBoard();
 								break;
