@@ -1,5 +1,13 @@
 #include "Piece.h"
 
+ sf::CircleShape Piece::pcs(float size, float i, float j, sf::Color col) {
+	sf::CircleShape p;
+	p.setRadius(size);
+	p.setFillColor(col);
+	p.setPosition(i, j);
+	return p;
+}
+
 void Piece::setCoordinates(int x, int y) {
 	xCoord = x;
 	yCoord = y;

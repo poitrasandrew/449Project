@@ -3,6 +3,7 @@
 
 int main()
 {
-	NineManGame game;
-	game.runWindow();
+	sf::RenderWindow window;
+	NineManGame mygame("board.png", "theimage.ttf");
+	mygame.runWindow();
 }

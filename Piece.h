@@ -1,10 +1,12 @@
 #pragma once
 #include <string>
 #include <SFML/Graphics.hpp>
-
+#include<vector>
+using namespace std;
 class Piece {
 
 public:
+
 	Piece(float size, float i, float j, sf::Color color);
 	sf::CircleShape pieceShape;
 	sf::CircleShape pieceShapeGenerator(float size, float i, float j, sf::Color color);
@@ -29,5 +31,4 @@ private:
 	int BoardCol;
 	int tempRow;
 	int tempCol;
-	
  };

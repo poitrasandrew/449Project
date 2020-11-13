@@ -1,5 +1,6 @@
 #include "NineManGame.h"
 
+
 std::string NineManGame::getcolorString(int i) {
 	if (i == WHITE) {
 		return "White";
@@ -8,6 +9,7 @@ std::string NineManGame::getcolorString(int i) {
 }
 
 void NineManGame::runWindow() {
+
 	BackendBoard backend = BackendBoard();	// object for backend logic handling
 	
 	std::vector<Piece> white, black;		// vectors for both player's pieces
@@ -24,6 +26,7 @@ void NineManGame::runWindow() {
 	bool isPlacementPhase = true;		// track initial game phase
 	bool isRemovalPhase = false;			// track if a player can remove an opponent's piece
 	bool gameOver = false;				// track when game ends
+
 	bool selected = false;				// track when piece is selected
 	int selectedPiece;					// track which piece is selected
 	int turn;							// track player turn	
@@ -32,6 +35,22 @@ void NineManGame::runWindow() {
 
 	// set initial turn from player input (use WHITE/BLACK constants from class header file)
 	turn = WHITE;
+	Piece pc;
+	NineManGame myGame("board.png", "theimage.ttf");
+
+	//cout << " Toss a coin and enter the result:";
+	//cin >> turn;	
+	vector<sf::CircleShape> white, red, player(0);
+	for (int i = 0; i < 18; i = i + 2)
+	{
+		red.push_back(pc.pcs(15.f, (i + 1) * 20, 17, sf::Color::Red));
+		white.push_back(pc.pcs(15.f, (i + 1) * 20, 50, sf::Color::Yellow));
+	}
+	(turn == WHITE ? player = white : player = red);
+	
+	int n = 0;
+	// set initial turn from player input (use WHITE/BLACK constants from class header file)
+	//turn = WHITE;
 
 	while (window.isOpen())
 	{
@@ -49,7 +68,7 @@ void NineManGame::runWindow() {
 		while (window.pollEvent(event))
 		{
 			//end loop when window closes
-			if (event.type == sf::Event::Closed) {
+			if (event.type == sf::Event::Closed) 
 				window.close();
 			}
 			//changes origin of the moved dot to make dragging more intuitive on left click
