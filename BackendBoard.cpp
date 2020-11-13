@@ -79,9 +79,50 @@ int BackendBoard::millDirectionCheck(int i, int j, int &millCount, int player, i
 	return 0;								// no action, but keep searching
 }
 
-/* bool BackendBoard::canRemove(Piece &piece) {
-	// if in mill, only remove if all others in mill  TODO 
-} */
+ bool BackendBoard::canRemove(int row, int col, int player) {
+	 if (!formsMill(row, col, player)) {		// return true if piece is not in mill
+		 return true;
+	}
+	 else {										// if piece is in mill, check if any other pieces are in a mill
+		 for (int i = 0; i < NineManGame::ROWMAX; i++) {
+			 for (int j = 0; j < NineManGame::COLMAX; j++) {
+				 if (board[i][j] == player) {
+					 if (!formsMill(i, j, player)) {	// if another piece is not in a mill, return false
+						 return false;					// since a different piece must be removed first
+					 }
+				 }
+			 }
+		 }
+	 }
+	 return true;							// if all other pieces are in a mill, the selected piece can be removed
+} 
+
+bool BackendBoard::isvalidPosition(int row, int col)
+{
+	if (row == 3 && col == 3) {				// cannot place piece in middle
+		std::cout << "(" << row << "," << col << ") is an invalid position." << std::endl;
+		return false;
+	}
+	if (row == col || row == 3 || col == 3 || row + col == 6) {		// acceptance cases
+		std::cout << "(" << row << "," << col << ") is a valid position." << std::endl;
+		return true;
+	}
+	else {
+		std::cout << "(" << row << "," << col << ") is an invalid position." << std::endl;
+		return false;
+	}
+}
+
+bool BackendBoard::isvalidPlacement(int row, int col) {
+	if (board[row][col] == NineManGame::EMPTY) {
+		std::cout << "(" << row << "," << col << ") is a valid placement." << std::endl;
+		return true;
+	}
+	else {
+		std::cout << "(" << row << "," << col << ") is a invalud placement: space not empty." << std::endl;
+		return false;
+	}
+}
 
 bool BackendBoard::isValidMove(int origRow, int origCol, int newRow, int newCol) {
 	// check if empty

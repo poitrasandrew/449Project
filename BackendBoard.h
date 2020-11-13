@@ -3,10 +3,12 @@
 
 class BackendBoard {
 public:
+	bool isvalidPosition(int row, int col);
+	bool isvalidPlacement(int row, int col);
 	bool isValidMove(int origRow, int origCol, int newRow, int newCol);
 	bool formsMill(int startRow, int startCol, int player);
 	int millDirectionCheck(int i, int j, int &millCount, int player, int oppPlayer);
-	// bool canRemove(Piece &piece); 
+	bool canRemove(int row, int col, int player); 
 	void updateBoard(int row, int col, int val);
 	void printBoard();
 	bool isLoser(int pieceCount, int player);

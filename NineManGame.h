@@ -1,6 +1,10 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <string>
+#include <vector>
+#include "Board.h"
+#include "BackendBoard.h"
+#include "Piece.h"
 
 #pragma once
 class NineManGame
@@ -11,9 +15,9 @@ public:
 	static std::string getcolorString(int i);
 
 	void runWindow();
+	void changeTurn(int &currentTurn);
 private:
 	sf::RenderWindow window;
-	void drawBoard(std::string);
 	sf::RectangleShape square;
 	sf::CircleShape dot;
 	sf::Texture bTexture;

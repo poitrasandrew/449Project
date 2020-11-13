@@ -4,7 +4,11 @@
 #include "../449Project-master/BackendBoard.h"
 #include "../449Project-master/BackendBoard.cpp"
 #include "../449Project-master/Piece.h"
+#include "../449Project-master/Piece.cpp"
+#include "../449Project-master/Board.h"
+#include "../449Project-master/Board.cpp"
 #include "../449Project-master/NineManGame.h"
+#include "../449Project-master/NineManGame.cpp"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -125,6 +129,88 @@ namespace Tests
 			Assert::IsFalse(backend.formsMill(2, 2, NineManGame::BLACK));
 		}
 
+	};
+
+	TEST_CLASS(validPositionTests)
+	{
+	public:
+		BackendBoard backend;
+		TEST_METHOD_INITIALIZE(setUp)
+		{
+			backend = BackendBoard();
+		}
+
+		TEST_METHOD(invalidPosTest1)
+		{
+			Assert::IsFalse(backend.isvalidPosition(1, 0));
+		}
+
+		TEST_METHOD(invalidPosTest2)
+		{
+			Assert::IsFalse(backend.isvalidPosition(4, 1));
+		}
+
+		TEST_METHOD(invalidPosTest3)
+		{
+			Assert::IsFalse(backend.isvalidPosition(3, 3));
+		}
+
+		TEST_METHOD(ValidPosTest1)
+		{
+			Assert::IsTrue(backend.isvalidPosition(0, 0));
+		}
+
+		TEST_METHOD(ValidPosTest2)
+		{
+			Assert::IsTrue(backend.isvalidPosition(6, 6));
+		}
+
+		TEST_METHOD(ValidPosTest3)
+		{
+			Assert::IsTrue(backend.isvalidPosition(3, 4));
+		}
+
+		TEST_METHOD(ValidPosTest4)
+		{
+			Assert::IsTrue(backend.isvalidPosition(2, 4));
+		}
+
+		TEST_METHOD(ValidPosTest5)
+		{
+			Assert::IsTrue(backend.isvalidPosition(1, 5));
+		}
+	};
+
+	TEST_CLASS(validPlacementTests)
+	{
+	public:
+		BackendBoard backend;
+		TEST_METHOD_INITIALIZE(setUp)
+		{
+			backend = BackendBoard();
+		}
+
+		TEST_METHOD(EmptyTest1)
+		{
+			Assert::IsTrue(backend.isvalidPlacement(0, 0));
+		}
+
+		TEST_METHOD(EmptyTest2)
+		{
+			Assert::IsTrue(backend.isvalidPlacement(1, 3));
+		}
+
+		TEST_METHOD(NonEmptyTest1)
+		{
+			backend.updateBoard(3, 1, NineManGame::WHITE);
+			Assert::IsFalse(backend.isvalidPlacement(3, 1));
+		}
+
+		TEST_METHOD(NonEmptyTest2)
+		{
+			backend.updateBoard(6, 5, NineManGame::BLACK);
+			Assert::IsFalse(backend.isvalidPlacement(6, 5));
+		}
 	};
 
 	TEST_CLASS(validMoveTests)
@@ -294,5 +380,35 @@ namespace Tests
 			// test if player is loser when they have the ability to fly
 			Assert::IsFalse(backend.isLoser(3, NineManGame::BLACK));
 		}
+	};
+
+	TEST_CLASS(removalTests)
+	{
+	public:
+		BackendBoard backend;
+		TEST_METHOD_INITIALIZE(setUp)
+		{
+			backend = BackendBoard();
+		}
+
+		TEST_METHOD(RemovalTest1)
+		{
+			// test if a piece in a mill can be removed when there is another piece not in a mill
+			backend.updateBoard(0, 0, NineManGame::WHITE);
+			backend.updateBoard(0, 3, NineManGame::WHITE);
+			backend.updateBoard(0, 6, NineManGame::WHITE);
+			backend.updateBoard(2, 2, NineManGame::WHITE);
+			Assert::IsFalse(backend.canRemove(0, 0, NineManGame::WHITE));
+		}
+
+		TEST_METHOD(RemovalTest2)
+		{
+			// test if a piece in a mill can be removed when all other pieces are in a mill as well
+			backend.updateBoard(3, 1, NineManGame::BLACK);
+			backend.updateBoard(1, 1, NineManGame::BLACK);
+			backend.updateBoard(5, 1, NineManGame::BLACK);
+			Assert::IsTrue(backend.canRemove(3, 1, NineManGame::BLACK));
+		}
+
 	};
 }
