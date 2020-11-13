@@ -1,6 +1,5 @@
 #include "NineManGame.h"
 
-
 std::string NineManGame::getcolorString(int i) {
 	if (i == WHITE) {
 		return "White";
@@ -9,7 +8,6 @@ std::string NineManGame::getcolorString(int i) {
 }
 
 void NineManGame::runWindow() {
-
 	BackendBoard backend = BackendBoard();	// object for backend logic handling
 	
 	std::vector<Piece> white, black;		// vectors for both player's pieces
@@ -24,33 +22,15 @@ void NineManGame::runWindow() {
 	window.setFramerateLimit(60);
 
 	bool isPlacementPhase = true;		// track initial game phase
-	bool isRemovalPhase = false;			// track if a player can remove an opponent's piece
+	bool isRemovalPhase = false;		// track if a player can remove an opponent's piece
 	bool gameOver = false;				// track when game ends
-
 	bool selected = false;				// track when piece is selected
 	int selectedPiece;					// track which piece is selected
 	int turn;							// track player turn	
-	int whitePlaceCounter = 9;			// piece counters for each player to know when placement phase is over
-	int blackPlaceCounter = 9;
+	int placementCounter = 18;			// counter to know when placement phase is over
 
 	// set initial turn from player input (use WHITE/BLACK constants from class header file)
 	turn = WHITE;
-	Piece pc;
-	NineManGame myGame("board.png", "theimage.ttf");
-
-	//cout << " Toss a coin and enter the result:";
-	//cin >> turn;	
-	vector<sf::CircleShape> white, red, player(0);
-	for (int i = 0; i < 18; i = i + 2)
-	{
-		red.push_back(pc.pcs(15.f, (i + 1) * 20, 17, sf::Color::Red));
-		white.push_back(pc.pcs(15.f, (i + 1) * 20, 50, sf::Color::Yellow));
-	}
-	(turn == WHITE ? player = white : player = red);
-	
-	int n = 0;
-	// set initial turn from player input (use WHITE/BLACK constants from class header file)
-	//turn = WHITE;
 
 	while (window.isOpen())
 	{
@@ -62,13 +42,18 @@ void NineManGame::runWindow() {
 			else if (turn == BLACK && backend.isLoser(black.size(), turn)) {
 				// black loses, end game, show results
 			}
-		}*/
+		}
+		
+		if (placementCounter <= 0) {		// enter movement phase once all pieces have been initially placed
+			isPlacementPhase = false;
+		}
+		*/
 
 		sf::Event event;
 		while (window.pollEvent(event))
 		{
 			//end loop when window closes
-			if (event.type == sf::Event::Closed) 
+			if (event.type == sf::Event::Closed) {
 				window.close();
 			}
 			//changes origin of the moved dot to make dragging more intuitive on left click
@@ -151,7 +136,7 @@ void NineManGame::runWindow() {
 										else {
 											// TODO update piece coordinates by passing the GUI coordinates to
 											// white[i].setCoordinates(x, y)
-											whitePlaceCounter--;
+											placementCounter--;
 										}
 									}
 									else {
@@ -185,43 +170,43 @@ void NineManGame::runWindow() {
 								selected = !selected;
 								/*
 								if (!isRemovalPhase) {		// if removal phase, do not process as piece movement
-								// TODO convert current GUI coordinates to backend board coordinates and
-								// store in temp coordinates of piece -- black[i].setTempCoordinates(x, y)
+									// TODO convert current GUI coordinates to backend board coordinates and
+									// store in temp coordinates of piece -- white[i].setTempCoordinates(x, y)
 
-								if (!backend.isvalidPosition(black[i].getTempRow(), black[i].getTempCol())) {
-								// TODO reset piece coordinates
-								break;
+								if (!backend.isvalidPosition(white[i].getTempRow(), white[i].getTempCol())) {
+									// TODO reset piece coordinates
+									break;
 								}
 
 								if (isPlacementPhase) {
-								if (!backend.isValidPlacement(black[i].getTempRow(), black[i].getTempCol()) {
-								// reset piece coordinates
-								break;
+									if (!backend.isValidPlacement(white[i].getTempRow(), white[i].getTempCol()) {
+										// reset piece coordinates
+										break;
+									}
+								else {
+									// TODO update piece coordinates by passing the GUI coordinates to
+									// white[i].setCoordinates(x, y)
+									placementCounter--;
+								}
 								}
 								else {
-								// TODO update piece coordinates by passing the GUI coordinates to
-								// black[i].setCoordinates(x, y)
-								blackPlaceCounter--;
-								}
-								}
-								else {
-								if(!backend.isValidMove(black[i].getRow(), black[i].getCol(), black[i].getTempRow(), black[i].getTempCol()) {
-								//reset piece coordinates
-								break;
-								}
-								else {
-								// TODO update piece coordinates by passing the GUI coordinates to
-								// black[i].setCoordinates(x, y)
-								}
+									if(!backend.isValidMove(white[i].getRow(), white[i].getCol(), white[i].getTempRow(), white[i].getTempCol()) {
+										//reset piece coordinates
+										break;
+									}
+									else {
+										// TODO update piece coordinates by passing the GUI coordinates to
+										// white[i].setCoordinates(x, y)
+									}
 								}
 
-								if (formsMill(black[i].getRow(), black[i].getCol(), BLACK) {
-								removalPhase = true;
-								backend.printBoard();
-								break;
+								if (formsMill(white[i].getRow(), white[i].getCol(), WHITE) {
+									removalPhase = true;
+									backend.printBoard();
+									break;
 								}
 								else {
-								changeTurn(turn);
+									changeTurn(turn);
 								}
 								}
 								*/
