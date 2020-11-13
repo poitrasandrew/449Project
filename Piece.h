@@ -6,22 +6,29 @@ using namespace std;
 class Piece {
 
 public:
-	//Piece( sf::Color);
-	sf::CircleShape pcs(float size, float i, float j, sf::Color col);
+
+	Piece(float size, float i, float j, sf::Color color);
+	sf::CircleShape pieceShape;
+	sf::CircleShape pieceShapeGenerator(float size, float i, float j, sf::Color color);
+	static void drawPieces(sf::RenderWindow& window, std::vector<Piece> &pieces);
 	void setCoordinates(int x, int y);	// needs to convert/set backend coordinates as well
+	void setTempCoordinates(int tempX, int tempY);
 	int getX();
 	int getY();
+	int getTempRow();
+	int getTempCol();
 	int getBoardRow();
 	int getBoardCol();
-	void drawDots(sf::RenderWindow& window, vector< sf::CircleShape> pcs);
-
-	bool isInMill = false;
+	~Piece();
 
 private:
 	int xCoord;		// GUI coordinates
 	int yCoord;
+	int tempXCoord;
+	int tempYCoord;
+
 	int BoardRow;	// backend "coordinates"
 	int BoardCol;
-	vector<sf::CircleShape>vec;
-
+	int tempRow;
+	int tempCol;
  };

@@ -2,8 +2,12 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <string>
-#include<iostream>
-using namespace std;
+#include <vector>
+#include "Board.h"
+#include "BackendBoard.h"
+#include "Piece.h"
+
+#pragma once
 class NineManGame
 {
 public:
@@ -13,6 +17,7 @@ public:
 	static std::string getcolorString(int i);
 	void drawBoard(sf::RenderWindow& window);
 	void runWindow();
+	void changeTurn(int &currentTurn);
 private:
 	
 	sf::RenderWindow window;
