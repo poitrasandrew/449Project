@@ -245,4 +245,5 @@ void NineManGame::changeTurn(int &currentTurn) {
 	else {
 		currentTurn = WHITE;
 	}
+	std::cout << "It is now " << NineManGame::getcolorString(currentTurn) << "'s turn." << std::endl;
 }

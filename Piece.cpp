@@ -1,13 +1,5 @@
 #include "Piece.h"
 
- sf::CircleShape Piece::pcs(float size, float i, float j, sf::Color col) {
-	sf::CircleShape p;
-	p.setRadius(size);
-	p.setFillColor(col);
-	p.setPosition(i, j);
-	return p;
-}
-
 void Piece::setCoordinates(int x, int y) {
 	xCoord = x;
 	yCoord = y;
@@ -52,10 +44,12 @@ Piece::Piece(float size, float i, float j, sf::Color color) {
 }
 
 sf::CircleShape Piece::pieceShapeGenerator(float size, float i, float j, sf::Color color) {
-									// returns shape to be drawn on board
+	// returns shape to be drawn on board
 	pieceShape.setRadius(size);
 	pieceShape.setFillColor(color);
 	pieceShape.setPosition(i, j);
+
+	setCoordinates(i, j);
 	return pieceShape;
 }
 
@@ -64,5 +58,5 @@ void Piece::drawPieces(sf::RenderWindow& window, std::vector<Piece> &pieces) {
 		window.draw(pieces[i].pieceShape);
 }
 
-Piece::~Piece(){
+Piece::~Piece() {
 }
