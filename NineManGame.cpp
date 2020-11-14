@@ -13,18 +13,67 @@ void NineManGame::runWindow() {
 	std::vector<Piece> white, black;		// vectors for both player's pieces
 	for (int i = 0; i < 18; i = i + 2)
 	{
-		white.push_back(Piece(15.f, (i + 1) * 20, 50, sf::Color::Yellow));
-		black.push_back(Piece(15.f, (i + 1) * 20, 17, sf::Color::Red));
+		white.push_back(Piece(15.f, (i + 1) * 20, 50, sf::Color::White));
+		black.push_back(Piece(15.f, (i + 1) * 20, 17, sf::Color(20, 20, 20, 255)));   // Color is slightly lighter than black to improve visibility of the pieces
 	}
 
-	Board gameBoard("board.png", "theimage.ttf");		// board setup
-	window.create(sf::VideoMode(720, 720), "9 Men's Morris");
+	Board gameBoard("board.png", "theimage.ttf");						// board setup
+	window.create(sf::VideoMode(720, 720), "Nine Men's Morris");
 	window.setFramerateLimit(60);
+
+	sf::RectangleShape gameBackground(sf::Vector2f(720.f, 720.f));		// Create a solid color background that will go behind the game board
+	gameBackground.setFillColor(sf::Color(140, 140, 140, 255));
+	gameBackground.setPosition(sf::Vector2f(0.f, 0.f));
+
+	sf::RectangleShape endGameOverlay(sf::Vector2f(720.f, 720.f));		// Create a dark transparent overlay to use for game results background
+	endGameOverlay.setFillColor(sf::Color(0, 0, 0, 215));
+	endGameOverlay.setPosition(sf::Vector2f(0.f, 0.f));
+
+	sf::Font font;														// Creates a font to be used by displayed text
+	if (!font.loadFromFile("NotoSansJP-Black.otf")) {
+		std::cout << "Cannot find the font file 'NotoSansJP-Black.otf' make sure it is in the same folder as NineManGame.cpp" << std::endl;
+	}
+
+	sf::Text whiteTurn("It is currently White's turn", font, 20);		// The following "sf::Text" code blocks create and stylize text objects that are displayed later in the current function
+	whiteTurn.setOutlineColor(sf::Color::Black);
+	whiteTurn.setOutlineThickness(2);
+	whiteTurn.setPosition(410, 35);
+
+	sf::Text blackTurn("It is currently Black's turn", font, 20);
+	blackTurn.setOutlineColor(sf::Color::Black);
+	blackTurn.setOutlineThickness(2);
+	blackTurn.setPosition(410, 35);
+
+	sf::Text whiteVictory("White has won the game!", font, 40);
+	whiteVictory.setOutlineColor(sf::Color::Black);
+	whiteVictory.setOutlineThickness(4);
+	whiteVictory.setPosition(105, 140);
+
+	sf::Text blackVictory("Black has won the game!", font, 40);
+	blackVictory.setOutlineColor(sf::Color::Black);
+	blackVictory.setOutlineThickness(4);
+	blackVictory.setPosition(105, 140);
+
+	sf::Text playAgain("Would you like to play again?", font, 28);
+	playAgain.setOutlineColor(sf::Color::Black);
+	playAgain.setOutlineThickness(3);
+	playAgain.setPosition(155, 280);
+
+	sf::Text yes("Yes", font, 28);
+	yes.setOutlineColor(sf::Color::Black);
+	yes.setOutlineThickness(3);
+	yes.setPosition(218, 330);
+
+	sf::Text no("No", font, 28);
+	no.setOutlineColor(sf::Color::Black);
+	no.setOutlineThickness(3);
+	no.setPosition(461, 330);
 
 	bool isPlacementPhase = true;		// track initial game phase
 	bool isRemovalPhase = false;		// track if a player can remove an opponent's piece
 	bool gameOver = false;				// track when game ends
 	bool selected = false;				// track when piece is selected
+	char winner = 'n';					// track winner of the game
 	int selectedPiece;					// track which piece is selected
 	int turn;							// track player turn	
 	int placementCounter = 18;			// counter to know when placement phase is over
@@ -33,14 +82,15 @@ void NineManGame::runWindow() {
 	turn = WHITE;
 
 	while (window.isOpen())
-	{
-											//Game over check
+	{										//Game over check
 		/*if (!isPlacementPhase) {			// TODO: adjust to acccount for ending game in placement phase
 			if (turn == WHITE && backend.isLoser(white.size(), turn)) {
-				// white loses, end game, show results
+				gameOver = true;
+				winner = 'b';		// white loses, end game, show results
 			}
 			else if (turn == BLACK && backend.isLoser(black.size(), turn)) {
-				// black loses, end game, show results
+				gameOver = true;
+				winner = 'w';		// black loses, end game, show results
 			}
 		}
 		
@@ -230,9 +280,41 @@ void NineManGame::runWindow() {
 		}
 
 		window.clear();
+		window.draw(gameBackground);
 		gameBoard.drawBoard(window);
 		Piece::drawPieces(window, white);
 		Piece::drawPieces(window, black);
+
+		switch (turn) {								// draw text on screen displaying who's turn it is
+		case 1:
+			window.draw(whiteTurn);
+			break;
+		case 2:
+			window.draw(blackTurn);
+			break;
+		}
+
+		if (gameOver == true) {						// check if the game has ended; if true then print who won and ask if the player wants to play again
+			switch (winner) {
+			case 'w':
+				window.draw(endGameOverlay);
+				window.draw(whiteVictory);
+				window.draw(playAgain);
+				window.draw(yes);
+				window.draw(no);
+				// still need to make "yes" and "no" clickable buttons
+				break;
+			case 'b':
+				window.draw(endGameOverlay);
+				window.draw(blackVictory);
+				window.draw(playAgain);
+				window.draw(yes);
+				window.draw(no);
+				// still need to make "yes" and "no" clickable buttons
+				break;
+			}
+		}
+
 		window.display();
 	}
 	return;
@@ -245,5 +327,5 @@ void NineManGame::changeTurn(int &currentTurn) {
 	else {
 		currentTurn = WHITE;
 	}
-	std::cout << "It is now " << NineManGame::getcolorString(currentTurn) << "'s turn." << std::endl;
+	std::cout << "It is currently " << NineManGame::getcolorString(currentTurn) << "'s turn." << std::endl;
 }
