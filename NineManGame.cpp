@@ -140,7 +140,7 @@ void NineManGame::runWindow() {
 										}
 									}
 									else {
-										if(!backend.isValidMove(white[i].getRow(), white[i].getCol(), white[i].getTempRow(), white[i].getTempCol()) {
+										if(!backend.isValidMove(white[i].getRow(), white[i].getCol(), white[i].getTempRow(), white[i].getTempCol(), white.size()) {
 											//reset piece coordinates
 											break;
 										}
@@ -179,7 +179,7 @@ void NineManGame::runWindow() {
 								}
 
 								if (isPlacementPhase) {
-									if (!backend.isValidPlacement(white[i].getTempRow(), white[i].getTempCol()) {
+									if (!backend.isValidPlacement(white[i].getTempRow(), white[i].getTempCol(), black.size()) {
 										// reset piece coordinates
 										break;
 									}
