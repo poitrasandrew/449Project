@@ -225,57 +225,63 @@ namespace Tests
 		TEST_METHOD(HorizMoveLeft)
 		{
 			// test horizontal move to left empty, adjacent point
-			Assert::IsTrue(backend.isValidMove(0, 3, 0, 0));
+			Assert::IsTrue(backend.isValidMove(0, 3, 0, 0, 5));
 		}
 
 		TEST_METHOD(HorizMoveRight)
 		{
 			// test horizontal move to right empty, adjacent point
-			Assert::IsTrue(backend.isValidMove(1, 1, 1, 3));
+			Assert::IsTrue(backend.isValidMove(1, 1, 1, 3, 8));
 		}
 
 		TEST_METHOD(HorizMoveNonAdj)
 		{
 			// test horizontal move to a nonadjacent empty point
-			Assert::IsFalse(backend.isValidMove(5, 1, 5, 6));
+			Assert::IsFalse(backend.isValidMove(5, 1, 5, 6, 4));
 		}
 
 		TEST_METHOD(HorizMoveNonEmpty)
 		{
 			// test horizontal move to a non-empty, adjacent point
 			backend.updateBoard(4, 3, NineManGame::WHITE);
-			Assert::IsFalse(backend.isValidMove(4, 4, 4, 3));
+			Assert::IsFalse(backend.isValidMove(4, 4, 4, 3, 9));
 		}
 
 		TEST_METHOD(VertMoveUp)
 		{
 			// test vertical move to empty, adjacent upper point
-			Assert::IsTrue(backend.isValidMove(3, 0, 0, 0));
+			Assert::IsTrue(backend.isValidMove(3, 0, 0, 0, 4));
 		}
 
 		TEST_METHOD(VertMoveDown)
 		{
 			// test vertical move to empty, adjacent lower point
-			Assert::IsTrue(backend.isValidMove(4, 3, 5, 3));
+			Assert::IsTrue(backend.isValidMove(4, 3, 5, 3, 7));
 		}
 
 		TEST_METHOD(VertMoveNonAdj)
 		{
 			// test vertical move to a nonadjacent, empty point
-			Assert::IsFalse(backend.isValidMove(1, 5, 5, 5));
+			Assert::IsFalse(backend.isValidMove(1, 5, 5, 5, 6));
 		}
 
 		TEST_METHOD(VertMoveNonEmpty)
 		{
 			// test vertical move to a nonadjacent, empty point
 			backend.updateBoard(3, 6, NineManGame::BLACK);
-			Assert::IsFalse(backend.isValidMove(6, 6, 3, 6));
+			Assert::IsFalse(backend.isValidMove(6, 6, 3, 6, 4));
 		}
 
 		TEST_METHOD(DiagMove)
 		{
 			// test diagonal move
-			Assert::IsFalse(backend.isValidMove(1, 5, 2, 4));
+			Assert::IsFalse(backend.isValidMove(1, 5, 2, 4, 5));
+		}
+
+		TEST_METHOD(FlyTest)
+		{
+			// test diagonal move
+			Assert::IsTrue(backend.isValidMove(1, 5, 2, 4, 2));
 		}
 	};
 

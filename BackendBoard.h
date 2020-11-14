@@ -5,7 +5,7 @@ class BackendBoard {
 public:
 	bool isvalidPosition(int row, int col);
 	bool isvalidPlacement(int row, int col);
-	bool isValidMove(int origRow, int origCol, int newRow, int newCol);
+	bool isValidMove(int origRow, int origCol, int newRow, int newCol, int pieceCount);
 	bool formsMill(int startRow, int startCol, int player);
 	int millDirectionCheck(int i, int j, int &millCount, int player, int oppPlayer);
 	bool canRemove(int row, int col, int player); 

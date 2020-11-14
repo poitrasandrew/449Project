@@ -124,12 +124,19 @@ bool BackendBoard::isvalidPlacement(int row, int col) {
 	}
 }
 
-bool BackendBoard::isValidMove(int origRow, int origCol, int newRow, int newCol) {
+bool BackendBoard::isValidMove(int origRow, int origCol, int newRow, int newCol, int pieceCount) {
 	// check if empty
 	if (board[newRow][newCol] != 0) {
 		std::cout << "Invalid Move (" << origRow << ", " << origCol << ") to ("
 			<< newRow << ", " << newCol << "): Destination is not empty." << std::endl;
 		return false;
+	}
+
+	// check if player can fly
+	if (pieceCount <= 3) {
+		std::cout << "Valid Move (" << origRow << ", " << origCol << ") to ("
+			<< newRow << ", " << newCol << "): Can Fly" << std::endl;
+		return true;			// any movement to empty space is valid when flying
 	}
 
 	// check if diagonal
@@ -218,7 +225,7 @@ bool BackendBoard::loserDirectionCheck(int startRow, int startCol) {
 
 	while (--i >= NineManGame::ROWMIN) {	// check upwards
 		if (board[i][startCol] != -1) {
-			if (isValidMove(startRow, startCol, i, startCol)) {
+			if (isValidMove(startRow, startCol, i, startCol, 9)) {
 				return false;
 			}
 			else { break; }			// stop searching if move is invalid, no moves that direction
@@ -227,7 +234,7 @@ bool BackendBoard::loserDirectionCheck(int startRow, int startCol) {
 	i = startRow;							// reset row index
 	while (++i < NineManGame::ROWMAX) {		// check downwards
 		if (board[i][startCol] != -1) {
-			if (isValidMove(startRow, startCol, i, startCol)) {
+			if (isValidMove(startRow, startCol, i, startCol, 9)) {
 				return false;
 			}
 			else { break; }
@@ -235,7 +242,7 @@ bool BackendBoard::loserDirectionCheck(int startRow, int startCol) {
 	}
 	while (--j >= NineManGame::COLMIN) {	// check leftwards
 		if (board[startRow][j] != -1) {
-			if (isValidMove(startRow, startCol, startRow, j)) {
+			if (isValidMove(startRow, startCol, startRow, j, 9)) {
 				return false;
 			}
 			else { break; }
@@ -244,7 +251,7 @@ bool BackendBoard::loserDirectionCheck(int startRow, int startCol) {
 	j = startCol;							// reset col index
 	while (++j < NineManGame::COLMAX) {		// check rightwards
 		if (board[startRow][j] != -1) {
-			if (isValidMove(startRow, startCol, startRow, j)) {
+			if (isValidMove(startRow, startCol, startRow, j, 9)) {
 				return false;
 			}
 			else { break; }
