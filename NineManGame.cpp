@@ -92,7 +92,7 @@ void NineManGame::runWindow() {
 							}
 						}
 						else if (isRemovalPhase) {
-							for (int i = 0; i < black.size(); i++) {
+							for (int i = 0; i < white.size(); i++) {
 								if (white[i].pieceShape.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y)) {
 									if (white[i].isPlaced() && backend.canRemove(white[i].getBoardRow(), white[i].getBoardCol(), WHITE)) {
 										backend.updateBoard(white[i].getBoardRow(), white[i].getBoardCol(), EMPTY);
