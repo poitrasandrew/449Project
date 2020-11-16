@@ -168,6 +168,7 @@ void NineManGame::runWindow() {
 						for (int i = 0; i < white.size(); i++) {
 							if (white[i].pieceShape.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y)) {
 								selected = !selected;		// stop dragging piece on mouse release
+								white[i].convertCoordinates();
 								/*
 								if (!isRemovalPhase) {		// if removal phase, do not process as piece movement
 									// TODO convert current GUI coordinates to backend board coordinates and
