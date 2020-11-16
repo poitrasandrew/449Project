@@ -13,6 +13,7 @@ public:
 	static void drawPieces(sf::RenderWindow& window, std::vector<Piece> &pieces);
 	void setCoordinates(int x, int y);	// needs to convert/set backend coordinates as well
 	void setTempCoordinates(int tempX, int tempY);
+	void convertCoordinates();
 	int getX();
 	int getY();
 	int getTempRow();
