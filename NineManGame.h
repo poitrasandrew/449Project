@@ -16,6 +16,8 @@ public:
 
 	void runWindow();
 	void changeTurn(int &currentTurn);
+	void displayTurn(int &currentTurn);
+	void declareWinner(char winner);
 private:
 	sf::RenderWindow window;
 	sf::RectangleShape square;

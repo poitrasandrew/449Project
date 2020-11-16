@@ -25,79 +25,25 @@ void NineManGame::runWindow() {
 	gameBackground.setFillColor(sf::Color(140, 140, 140, 255));
 	gameBackground.setPosition(sf::Vector2f(0.f, 0.f));
 
-	sf::RectangleShape endGameOverlay(sf::Vector2f(720.f, 720.f));		// Create a dark transparent overlay to use for game results background
-	endGameOverlay.setFillColor(sf::Color(0, 0, 0, 215));
-	endGameOverlay.setPosition(sf::Vector2f(0.f, 0.f));
-
-	sf::Font font;														// Creates a font to be used by displayed text
-	if (!font.loadFromFile("NotoSansJP-Black.otf")) {
-		std::cout << "Cannot find the font file 'NotoSansJP-Black.otf' make sure it is in the same folder as NineManGame.cpp" << std::endl;
-	}
-
-	sf::Text whiteTurn("It is currently White's turn", font, 20);		// The following "sf::Text" code blocks create and stylize text objects that are displayed later in the current function
-	whiteTurn.setOutlineColor(sf::Color::Black);
-	whiteTurn.setOutlineThickness(2);
-	whiteTurn.setPosition(410, 35);
-
-	sf::Text blackTurn("It is currently Black's turn", font, 20);
-	blackTurn.setOutlineColor(sf::Color::Black);
-	blackTurn.setOutlineThickness(2);
-	blackTurn.setPosition(410, 35);
-
-	sf::Text whiteVictory("White has won the game!", font, 40);
-	whiteVictory.setOutlineColor(sf::Color::Black);
-	whiteVictory.setOutlineThickness(4);
-	whiteVictory.setPosition(105, 140);
-
-	sf::Text blackVictory("Black has won the game!", font, 40);
-	blackVictory.setOutlineColor(sf::Color::Black);
-	blackVictory.setOutlineThickness(4);
-	blackVictory.setPosition(105, 140);
-
-	sf::Text playAgain("Would you like to play again?", font, 28);
-	playAgain.setOutlineColor(sf::Color::Black);
-	playAgain.setOutlineThickness(3);
-	playAgain.setPosition(155, 280);
-
-	sf::Text yes("Yes", font, 28);
-	yes.setOutlineColor(sf::Color::Black);
-	yes.setOutlineThickness(3);
-	yes.setPosition(218, 330);
-
-	sf::Text no("No", font, 28);
-	no.setOutlineColor(sf::Color::Black);
-	no.setOutlineThickness(3);
-	no.setPosition(461, 330);
-
 	bool isPlacementPhase = true;		// track initial game phase
 	bool isRemovalPhase = false;		// track if a player can remove an opponent's piece
-	bool gameOver = false;				// track when game ends
+	//bool gameOver = false;				// track when game ends
 	bool selected = false;				// track when piece is selected
 	char winner = 'n';					// track winner of the game
 	int selectedPiece;					// track which piece is selected
 	int turn;							// track player turn	
-	int placementCounter = 18;			// counter to know when placement phase is over
+	int whitePlacementCounter = 9;		// counter to know when placement phase is over
+	int blackPlacementCounter = 9;
 
 	// set initial turn from player input (use WHITE/BLACK constants from class header file)
 	turn = WHITE;
 
 	while (window.isOpen())
-	{										//Game over check
-		/*if (!isPlacementPhase) {			// TODO: adjust to acccount for ending game in placement phase
-			if (turn == WHITE && backend.isLoser(white.size(), turn)) {
-				gameOver = true;
-				winner = 'b';		// white loses, end game, show results
-			}
-			else if (turn == BLACK && backend.isLoser(black.size(), turn)) {
-				gameOver = true;
-				winner = 'w';		// black loses, end game, show results
-			}
-		}
-		
-		if (placementCounter <= 0) {		// enter movement phase once all pieces have been initially placed
+	{			
+		if (whitePlacementCounter <= 0 && blackPlacementCounter <= 0) {		// enter movement phase once all pieces have been initially placed
 			isPlacementPhase = false;
 		}
-		*/
+		
 
 		sf::Event event;
 		while (window.pollEvent(event))
@@ -123,7 +69,7 @@ void NineManGame::runWindow() {
 						else if (isRemovalPhase) {
 							for (int i = 0; i < black.size(); i++) {
 								if (black[i].pieceShape.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y)) {
-									if (backend.canRemove(black[i].getBoardRow(), black[i].getBoardCol(), BLACK)) {
+									if (black[i].isPlaced() && backend.canRemove(black[i].getBoardRow(), black[i].getBoardCol(), BLACK)) {
 										backend.updateBoard(black[i].getBoardRow(), black[i].getBoardCol(), EMPTY);
 										black.erase(black.begin() + i);
 										isRemovalPhase = false;
@@ -148,7 +94,7 @@ void NineManGame::runWindow() {
 						else if (isRemovalPhase) {
 							for (int i = 0; i < black.size(); i++) {
 								if (white[i].pieceShape.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y)) {
-									if (backend.canRemove(white[i].getBoardRow(), white[i].getBoardCol(), WHITE)) {
+									if (white[i].isPlaced() && backend.canRemove(white[i].getBoardRow(), white[i].getBoardCol(), WHITE)) {
 										backend.updateBoard(white[i].getBoardRow(), white[i].getBoardCol(), EMPTY);
 										white.erase(white.begin() + i);
 										isRemovalPhase = false;
@@ -168,40 +114,48 @@ void NineManGame::runWindow() {
 						for (int i = 0; i < white.size(); i++) {
 							if (white[i].pieceShape.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y)) {
 								selected = !selected;		// stop dragging piece on mouse release
-								/*
+								
 								if (!isRemovalPhase) {		// if removal phase, do not process as piece movement
-									// TODO convert current GUI coordinates to backend board coordinates and
-									// store in temp coordinates of piece -- white[i].setTempCoordinates(x, y)
+									white[i].convertTempCoordinates();
 
 									if (!backend.isvalidPosition(white[i].getTempRow(), white[i].getTempCol())) {
-										// TODO reset piece coordinates
+										white[i].snapToOldPos();
 										break;
 									}
 
-									if (isPlacementPhase) {
-										if (!backend.isValidPlacement(white[i].getTempRow(), white[i].getTempCol()) {
-											// reset piece coordinates
+									if (whitePlacementCounter > 0) {			// do not move pieces that have already been placed until placement phase is over
+										if (white[i].isPlaced()) {
+											white[i].snapToOldPos();
+											break;
+										}
+										if (!backend.isvalidPlacement(white[i].getTempRow(), white[i].getTempCol())) {
+											white[i].snapToOldPos();
 											break;
 										}
 										else {
-											// TODO update piece coordinates by passing the GUI coordinates to
-											// white[i].setCoordinates(x, y)
-											placementCounter--;
+											white[i].convertCoordinates();
+											white[i].setPlaced();
+											white[i].snapToNewPos();
+											backend.updateBoard(white[i].getBoardRow(), white[i].getBoardCol(), WHITE);
+											whitePlacementCounter--;
 										}
 									}
-									else {
-										if(!backend.isValidMove(white[i].getRow(), white[i].getCol(), white[i].getTempRow(), white[i].getTempCol(), white.size()) {
-											//reset piece coordinates
+									else if (whitePlacementCounter <= 0) {
+										if(!backend.isValidMove(white[i].getBoardRow(), white[i].getBoardCol(), white[i].getTempRow(), white[i].getTempCol(), white.size())) {
+											white[i].snapToOldPos();
 											break;
 										}
 										else {
-											// TODO update piece coordinates by passing the GUI coordinates to
-											// white[i].setCoordinates(x, y)
+											// update piece coordinates by passing the GUI coordinates to
+											backend.updateBoard(white[i].getBoardRow(), white[i].getBoardCol(), EMPTY);
+											white[i].convertCoordinates();
+											white[i].snapToNewPos();
+											backend.updateBoard(white[i].getBoardRow(), white[i].getBoardCol(), WHITE);
 										}
 									}
 
-									if (formsMill(white[i].getRow(), white[i].getCol(), WHITE) {
-										removalPhase = true;
+									if (backend.formsMill(white[i].getBoardRow(), white[i].getBoardCol(), WHITE)) {
+										isRemovalPhase = true;
 										backend.printBoard();
 										break;
 									}
@@ -209,7 +163,7 @@ void NineManGame::runWindow() {
 										changeTurn(turn);
 									}
 								}
-								*/
+								
 								backend.printBoard();		// print updated backend board for console logging
 							}
 						}
@@ -218,54 +172,59 @@ void NineManGame::runWindow() {
 						for (int i = 0; i < black.size(); i++) {
 							if (black[i].pieceShape.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y)) {
 								selected = !selected;
-								/*
 								if (!isRemovalPhase) {		// if removal phase, do not process as piece movement
-									// TODO convert current GUI coordinates to backend board coordinates and
-									// store in temp coordinates of piece -- white[i].setTempCoordinates(x, y)
+									black[i].convertTempCoordinates();
 
-								if (!backend.isvalidPosition(white[i].getTempRow(), white[i].getTempCol())) {
-									// TODO reset piece coordinates
-									break;
-								}
-
-								if (isPlacementPhase) {
-									if (!backend.isValidPlacement(white[i].getTempRow(), white[i].getTempCol(), black.size()) {
-										// reset piece coordinates
+									if (!backend.isvalidPosition(black[i].getTempRow(), black[i].getTempCol())) {
+										black[i].snapToOldPos();
 										break;
 									}
-								else {
-									// TODO update piece coordinates by passing the GUI coordinates to
-									// white[i].setCoordinates(x, y)
-									placementCounter--;
-								}
-								}
-								else {
-									if(!backend.isValidMove(white[i].getRow(), white[i].getCol(), white[i].getTempRow(), white[i].getTempCol()) {
-										//reset piece coordinates
+
+									if (blackPlacementCounter > 0) {			// do not move pieces that have already been placed until placement phase is over
+										if (black[i].isPlaced()) {
+											black[i].snapToOldPos();
+											break;
+										}
+										if (!backend.isvalidPlacement(black[i].getTempRow(), black[i].getTempCol())) {
+											black[i].snapToOldPos();
+											break;
+										}
+										else {
+											black[i].convertCoordinates();
+											black[i].setPlaced();
+											black[i].snapToNewPos();
+											backend.updateBoard(black[i].getBoardRow(), black[i].getBoardCol(), BLACK);
+											blackPlacementCounter--;
+										}
+									}
+									else if (blackPlacementCounter <= 0) {
+										if (!backend.isValidMove(black[i].getBoardRow(), black[i].getBoardCol(), black[i].getTempRow(), black[i].getTempCol(), black.size())) {
+											black[i].snapToOldPos();
+											break;
+										}
+										else {
+											// update piece coordinates by passing the GUI coordinates to
+											backend.updateBoard(black[i].getBoardRow(), black[i].getBoardCol(), EMPTY);
+											black[i].convertCoordinates();
+											black[i].snapToNewPos();
+											backend.updateBoard(black[i].getBoardRow(), black[i].getBoardCol(), BLACK);
+										}
+									}
+
+									if (backend.formsMill(black[i].getBoardRow(), black[i].getBoardCol(), BLACK)) {
+										isRemovalPhase = true;
+										backend.printBoard();
 										break;
 									}
 									else {
-										// TODO update piece coordinates by passing the GUI coordinates to
-										// white[i].setCoordinates(x, y)
+										changeTurn(turn);
 									}
 								}
-
-								if (formsMill(white[i].getRow(), white[i].getCol(), WHITE) {
-									removalPhase = true;
-									backend.printBoard();
-									break;
-								}
-								else {
-									changeTurn(turn);
-								}
-								}
-								*/
 								backend.printBoard();		// print updated backend board for console logging
 							}
 						}
 					}
 				}
-				changeTurn(turn);		// delete line when logic functions are implemented, used for forcing turn change
 			}
 
 			//move the dot around when one has been selected
@@ -280,38 +239,21 @@ void NineManGame::runWindow() {
 		}
 
 		window.clear();
+
 		window.draw(gameBackground);
 		gameBoard.drawBoard(window);
 		Piece::drawPieces(window, white);
 		Piece::drawPieces(window, black);
+		displayTurn(turn);
 
-		switch (turn) {								// draw text on screen displaying who's turn it is
-		case 1:
-			window.draw(whiteTurn);
-			break;
-		case 2:
-			window.draw(blackTurn);
-			break;
-		}
-
-		if (gameOver == true) {						// check if the game has ended; if true then print who won and ask if the player wants to play again
-			switch (winner) {
-			case 'w':
-				window.draw(endGameOverlay);
-				window.draw(whiteVictory);
-				window.draw(playAgain);
-				window.draw(yes);
-				window.draw(no);
-				// still need to make "yes" and "no" clickable buttons
-				break;
-			case 'b':
-				window.draw(endGameOverlay);
-				window.draw(blackVictory);
-				window.draw(playAgain);
-				window.draw(yes);
-				window.draw(no);
-				// still need to make "yes" and "no" clickable buttons
-				break;
+		if (!isPlacementPhase) {
+			if (backend.isLoser(white.size(), WHITE)) {
+				winner = 'b';		// white loses, end game, show results
+				declareWinner(winner);
+			}
+			else if (backend.isLoser(black.size(), BLACK)) {
+				winner = 'w';		// black loses, end game, show results
+				declareWinner(winner);
 			}
 		}
 
@@ -328,4 +270,85 @@ void NineManGame::changeTurn(int &currentTurn) {
 		currentTurn = WHITE;
 	}
 	std::cout << "It is currently " << NineManGame::getcolorString(currentTurn) << "'s turn." << std::endl;
+}
+
+void NineManGame::displayTurn(int &currentTurn) {
+	sf::Font font;														// Creates a font to be used by displayed text
+	if (!font.loadFromFile("NotoSansJP-Black.otf")) {
+		std::cout << "Cannot find the font file 'NotoSansJP-Black.otf' make sure it is in the same folder as NineManGame.cpp" << std::endl;
+	}
+
+	sf::Text whiteTurn("It is currently White's turn", font, 20);		// The following "sf::Text" code blocks create and stylize text objects that are displayed later in the current function
+	whiteTurn.setOutlineColor(sf::Color::Black);
+	whiteTurn.setOutlineThickness(2);
+	whiteTurn.setPosition(410, 35);
+
+	sf::Text blackTurn("It is currently Black's turn", font, 20);
+	blackTurn.setOutlineColor(sf::Color::Black);
+	blackTurn.setOutlineThickness(2);
+	blackTurn.setPosition(410, 35);
+
+	switch (currentTurn) {								// draw text on screen displaying who's turn it is
+	case 1:
+		window.draw(whiteTurn);
+		break;
+	case 2:
+		window.draw(blackTurn);
+		break;
+	}
+}
+
+void NineManGame::declareWinner(char winner) {
+	sf::RectangleShape endGameOverlay(sf::Vector2f(720.f, 720.f));		// Create a dark transparent overlay to use for game results background
+	endGameOverlay.setFillColor(sf::Color(0, 0, 0, 215));
+	endGameOverlay.setPosition(sf::Vector2f(0.f, 0.f));
+
+	sf::Font font;														// Creates a font to be used by displayed text
+	if (!font.loadFromFile("NotoSansJP-Black.otf")) {
+		std::cout << "Cannot find the font file 'NotoSansJP-Black.otf' make sure it is in the same folder as NineManGame.cpp" << std::endl;
+	}
+
+	sf::Text whiteVictory("White has won the game!", font, 40);
+	whiteVictory.setOutlineColor(sf::Color::Black);
+	whiteVictory.setOutlineThickness(4);
+	whiteVictory.setPosition(105, 140);
+
+	sf::Text blackVictory("Black has won the game!", font, 40);
+	blackVictory.setOutlineColor(sf::Color::Black);
+	blackVictory.setOutlineThickness(4);
+	blackVictory.setPosition(105, 140);
+
+	sf::Text playAgain("Would you like to play again?", font, 28);
+	playAgain.setOutlineColor(sf::Color::Black);
+	playAgain.setOutlineThickness(3);
+	playAgain.setPosition(155, 280);
+
+	sf::Text yes("Yes", font, 28);
+	yes.setOutlineColor(sf::Color::Black);
+	yes.setOutlineThickness(3);
+	yes.setPosition(218, 330);
+
+	sf::Text no("No", font, 28);
+	no.setOutlineColor(sf::Color::Black);
+	no.setOutlineThickness(3);
+	no.setPosition(461, 330);
+	std::cout << "Ending the game." << std::endl;
+	switch (winner) {
+	case 'w':
+		window.draw(endGameOverlay);
+		window.draw(whiteVictory);
+		window.draw(playAgain);
+		window.draw(yes);
+		window.draw(no);
+		// still need to make "yes" and "no" clickable buttons
+		break;
+	case 'b':
+		window.draw(endGameOverlay);
+		window.draw(blackVictory);
+		window.draw(playAgain);
+		window.draw(yes);
+		window.draw(no);
+		// still need to make "yes" and "no" clickable buttons
+		break;
+	}
 }
