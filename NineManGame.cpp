@@ -39,18 +39,7 @@ void NineManGame::runWindow() {
 	turn = WHITE;
 
 	while (window.isOpen())
-	{										//Game over check
-		if (!isPlacementPhase) {
-			if (turn == WHITE && backend.isLoser(white.size(), turn)) {
-				winner = 'b';		// white loses, end game, show results
-				declareWinner(window, winner);
-			}
-			else if (turn == BLACK && backend.isLoser(black.size(), turn)) {
-				winner = 'w';		// black loses, end game, show results
-				declareWinner(window, winner);
-			}
-		}
-		
+	{			
 		if (whitePlacementCounter <= 0 && blackPlacementCounter <= 0) {		// enter movement phase once all pieces have been initially placed
 			isPlacementPhase = false;
 		}
@@ -250,11 +239,23 @@ void NineManGame::runWindow() {
 		}
 
 		window.clear();
+
 		window.draw(gameBackground);
 		gameBoard.drawBoard(window);
 		Piece::drawPieces(window, white);
 		Piece::drawPieces(window, black);
 		displayTurn(turn);
+
+		if (!isPlacementPhase) {
+			if (backend.isLoser(white.size(), WHITE)) {
+				winner = 'b';		// white loses, end game, show results
+				declareWinner(winner);
+			}
+			else if (backend.isLoser(black.size(), BLACK)) {
+				winner = 'w';		// black loses, end game, show results
+				declareWinner(winner);
+			}
+		}
 
 		window.display();
 	}
@@ -297,7 +298,7 @@ void NineManGame::displayTurn(int &currentTurn) {
 	}
 }
 
-void NineManGame::declareWinner(sf::RenderWindow& window, char winner) {
+void NineManGame::declareWinner(char winner) {
 	sf::RectangleShape endGameOverlay(sf::Vector2f(720.f, 720.f));		// Create a dark transparent overlay to use for game results background
 	endGameOverlay.setFillColor(sf::Color(0, 0, 0, 215));
 	endGameOverlay.setPosition(sf::Vector2f(0.f, 0.f));
@@ -331,7 +332,7 @@ void NineManGame::declareWinner(sf::RenderWindow& window, char winner) {
 	no.setOutlineColor(sf::Color::Black);
 	no.setOutlineThickness(3);
 	no.setPosition(461, 330);
-
+	std::cout << "Ending the game." << std::endl;
 	switch (winner) {
 	case 'w':
 		window.draw(endGameOverlay);
