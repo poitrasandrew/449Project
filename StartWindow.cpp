@@ -13,7 +13,7 @@ void StartWindow::runWindow() {
 	window.setFramerateLimit(60);
 	
 
-	Button pvp("2 Player Game", 300, 50, 50.f, 50.f, 30, sf::Color::Magenta);
+	Button pvpButton("2 Player Game", 300, 50, 50.f, 50.f, 30, sf::Color::Magenta);
 
 	while (window.isOpen()) {
 		sf::Event event;
@@ -21,7 +21,7 @@ void StartWindow::runWindow() {
 			if (event.type == sf::Event::Closed)
 				window.close();
 		}
-		pvp.draw(window);
+		pvpButton.draw(window);
 
 	}
 }
