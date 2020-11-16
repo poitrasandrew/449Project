@@ -16,8 +16,8 @@ void FirstTurnWindow::runWindow() {
 	gameBackground.setFillColor(sf::Color(140, 140, 140, 255));
 	gameBackground.setPosition(sf::Vector2f(0.f, 0.f));
 
-	Button white("White Goes First", 300, 50, 50.f, 50.f, 30, sf::Color::Red);
-	Button black("Black Goes First", 300, 50, 50.f, 150.f, 30, sf::Color::Red);
+	Button white("White Goes First", 300, 50, 50.f, 50.f, 30, sf::Color::Transparent);
+	Button black("Black Goes First", 300, 50, 50.f, 150.f, 30, sf::Color::Transparent);
 
 	NineManGame game;
 
@@ -27,12 +27,12 @@ void FirstTurnWindow::runWindow() {
 			if (event.type == sf::Event::Closed)
 				window.close();
 			if (white.clicked(event)) {
-				game.runWindow(WHITE);
 				window.close();
+				game.runWindow(WHITE);
 			}
 			if (black.clicked(event)) {
-				game.runWindow(BLACK);
 				window.close();
+				game.runWindow(BLACK);
 			}
 		}
 

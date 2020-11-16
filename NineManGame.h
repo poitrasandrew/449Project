@@ -5,6 +5,7 @@
 #include "Board.h"
 #include "BackendBoard.h"
 #include "Piece.h"
+#include "Button.h"
 
 #pragma once
 class NineManGame
@@ -24,4 +25,5 @@ private:
 	sf::CircleShape dot;
 	sf::Texture bTexture;
 	sf::Sprite bSprite;
+	int turn;							// track player turn	
 };

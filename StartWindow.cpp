@@ -17,10 +17,8 @@ void StartWindow::runWindow() {
 	gameBackground.setFillColor(sf::Color(140, 140, 140, 255));
 	gameBackground.setPosition(sf::Vector2f(0.f, 0.f));
 
-	Button pvpButton("2 Player Game", 300, 50, 50.f, 50.f, 30, sf::Color::Red);
-	Button pveButton("1 Player Game", 300, 50, 50.f, 150.f, 30, sf::Color::Red);
-	Button white("White Goes First", 300, 50, 50.f, 50.f, 30, sf::Color::Red);
-	Button black("Black Goes First", 300, 50, 50.f, 150.f, 30, sf::Color::Red);
+	Button pvpButton("2 Player Game", 300, 50, 50.f, 50.f, 30, sf::Color::Transparent);
+	Button pveButton("1 Player Game", 300, 50, 50.f, 150.f, 30, sf::Color::Transparent);
 
 	while (window.isOpen()) {
 		sf::Event event;
@@ -28,9 +26,9 @@ void StartWindow::runWindow() {
 			if (event.type == sf::Event::Closed)
 				window.close();
 			if (pvpButton.clicked(event)) {
+				window.close();
 				FirstTurnWindow ftw;
 				ftw.runWindow();
-				window.close();
 			}
 		}
 
