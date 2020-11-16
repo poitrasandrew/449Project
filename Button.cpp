@@ -12,7 +12,9 @@ Button::Button(std::string name, float sizeX, float sizeY, float posX, float pos
 	buttonText.setFont(font);
 	buttonText.setString(name);
 	buttonText.setCharacterSize(fontSize);
-	buttonText.setPosition(posX + 5, ((sizeY / 2) + (fontSize / 2)) + posY);
+	buttonText.setPosition(posX + ((posX - buttonText.getLocalBounds().left) / 2), posY + 5);//+ ((posY - buttonText.getLocalBounds().top) / 2));
+	buttonText.setOutlineColor(sf::Color::Black);
+	buttonText.setOutlineThickness(3);
 
 }
 

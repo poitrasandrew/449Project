@@ -1,35 +1,37 @@
-#include "StartWindow.h"
-#include "FirstTurnWindow.h"
+#include "FirstTurnWindow.h""
 
-StartWindow::StartWindow() {
-
-}
-
-StartWindow::~StartWindow() {
+FirstTurnWindow::FirstTurnWindow() {
 
 }
 
-void StartWindow::runWindow() {
-	window.create(sf::VideoMode(400.f, 300.f), "Mill Game Options");
+FirstTurnWindow::~FirstTurnWindow() {
+
+}
+
+void FirstTurnWindow::runWindow() {
+	window.create(sf::VideoMode(400.f, 300.f), "Who Goes First?");
 	window.setFramerateLimit(60);
-	
+
 	sf::RectangleShape gameBackground(sf::Vector2f(400.f, 300.f));		// Create a solid color background that will go behind the game board
 	gameBackground.setFillColor(sf::Color(140, 140, 140, 255));
 	gameBackground.setPosition(sf::Vector2f(0.f, 0.f));
 
-	Button pvpButton("2 Player Game", 300, 50, 50.f, 50.f, 30, sf::Color::Red);
-	Button pveButton("1 Player Game", 300, 50, 50.f, 150.f, 30, sf::Color::Red);
 	Button white("White Goes First", 300, 50, 50.f, 50.f, 30, sf::Color::Red);
 	Button black("Black Goes First", 300, 50, 50.f, 150.f, 30, sf::Color::Red);
+
+	NineManGame game;
 
 	while (window.isOpen()) {
 		sf::Event event;
 		while (window.pollEvent(event)) {
 			if (event.type == sf::Event::Closed)
 				window.close();
-			if (pvpButton.clicked(event)) {
-				FirstTurnWindow ftw;
-				ftw.runWindow();
+			if (white.clicked(event)) {
+				game.runWindow(WHITE);
+				window.close();
+			}
+			if (black.clicked(event)) {
+				game.runWindow(BLACK);
 				window.close();
 			}
 		}
@@ -37,8 +39,8 @@ void StartWindow::runWindow() {
 		window.clear();
 
 		window.draw(gameBackground);
-		pvpButton.draw(window);
-		pveButton.draw(window);
+		white.draw(window);
+		black.draw(window);
 
 		window.display();
 

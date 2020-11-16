@@ -7,7 +7,7 @@ std::string NineManGame::getcolorString(int i) {
 	else { return "Black"; }
 }
 
-void NineManGame::runWindow() {
+void NineManGame::runWindow(int goesFirst) {
 	BackendBoard backend = BackendBoard();	// object for backend logic handling
 	
 	std::vector<Piece> white, black;		// vectors for both player's pieces
@@ -36,7 +36,7 @@ void NineManGame::runWindow() {
 	int blackPlacementCounter = 9;
 
 	// set initial turn from player input (use WHITE/BLACK constants from class header file)
-	turn = WHITE;
+	turn = goesFirst;
 
 	while (window.isOpen())
 	{			

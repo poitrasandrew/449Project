@@ -14,7 +14,7 @@ public:
 	static const int INVALID = -1, EMPTY = 0, WHITE = 1, BLACK = 2;		// array value definitions
 	static std::string getcolorString(int i);
 
-	void runWindow();
+	void runWindow(int goesFirst);
 	void changeTurn(int &currentTurn);
 	void displayTurn(int &currentTurn);
 	void declareWinner(char winner);
