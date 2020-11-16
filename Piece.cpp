@@ -58,5 +58,18 @@ void Piece::drawPieces(sf::RenderWindow& window, std::vector<Piece> &pieces) {
 		window.draw(pieces[i].pieceShape);
 }
 
+void Piece::convertCoordinates() { //set up for 720x720 window with board at 85,85
+	BoardCol = (pieceShape.getPosition().x - 73 / 82);//sets backend row and col with 0 as first position and 6 as last position
+	BoardRow = (pieceShape.getPosition().y - 73 / 82);
+	if (BoardCol < 0 || BoardCol > 6) {
+		BoardCol = -1;
+		BoardRow = -1;
+	}
+	else if (BoardRow < 0 || BoardRow > 6) {
+		BoardCol = -1;
+		BoardRow = -1;
+	}
+}
+
 Piece::~Piece() {
 }
