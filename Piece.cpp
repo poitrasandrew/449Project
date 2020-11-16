@@ -67,9 +67,9 @@ void Piece::drawPieces(sf::RenderWindow& window, std::vector<Piece> &pieces) {
 }
 
 void Piece::snapToNewPos() {//uses the backend row and column to snap the piece to the center of its frontend window "grid coordinate"
-	xCoord = 114 + (BoardCol * 82);
-	yCoord = 114 + (BoardRow * 82);
-	pieceShape.setOrigin(15,15);
+	xCoord = 99 + (BoardCol * 82);
+	yCoord = 99 + (BoardRow * 82);
+	pieceShape.setOrigin(0,0);
 	pieceShape.setPosition(xCoord, yCoord);
 }
 
