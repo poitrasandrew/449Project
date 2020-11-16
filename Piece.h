@@ -14,6 +14,8 @@ public:
 	void setCoordinates(int x, int y);	// needs to convert/set backend coordinates as well
 	void setTempCoordinates(int tempX, int tempY);
 	void convertCoordinates();
+	void snapToNewPos();
+	void snapToOldPos();
 	int getX();
 	int getY();
 	int getTempRow();

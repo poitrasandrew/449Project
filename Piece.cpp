@@ -73,5 +73,13 @@ void Piece::convertCoordinates() { //set up for 720x720 window with board at 85,
 	}
 }
 
+void Piece::snapToNewPos() {//uses the backend row and column to snap the piece to the center of its frontend window "grid coordinate"
+	pieceShape.setPosition(114 + (BoardCol * 82), 114 + (BoardRow * 82));
+}
+
+void Piece::snapToOldPos() {//meant to snap the piece to its old frontend grid coordinate which will be held in the temp variables for use when an invalid move is attempted
+	pieceShape.setPosition(tempXCoord, tempYCoord);
+}
+
 Piece::~Piece() {
 }
