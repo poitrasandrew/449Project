@@ -11,20 +11,25 @@ public:
 	sf::CircleShape pieceShape;
 	sf::CircleShape pieceShapeGenerator(float size, float i, float j, sf::Color color);
 	static void drawPieces(sf::RenderWindow& window, std::vector<Piece> &pieces);
-	void setCoordinates(int x, int y);	// needs to convert/set backend coordinates as well
+	void setCoordinates();
 	void setTempCoordinates(int tempX, int tempY);
 	void convertCoordinates();
+	void convertTempCoordinates();
+	void snapToNewPos();
+	void snapToOldPos();
 	int getX();
 	int getY();
 	int getTempRow();
 	int getTempCol();
 	int getBoardRow();
 	int getBoardCol();
+	bool isPlaced();
+	void setPlaced();
 	~Piece();
 
 private:
-	int xCoord;		// GUI coordinates
-	int yCoord;
+	float xCoord;	// GUI coordinates
+	float yCoord;
 	int tempXCoord;
 	int tempYCoord;
 
@@ -32,4 +37,6 @@ private:
 	int BoardCol;
 	int tempRow;
 	int tempCol;
+
+	bool placed = false;	// track which pieces have been placed
  };
