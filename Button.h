@@ -9,9 +9,10 @@ public:
 	~Button();
 	bool clicked(sf::Event &);
 	void draw(sf::RenderWindow &);
-
-private:
 	sf::RectangleShape buttonBox;
 	sf::Text buttonText;
+
+private:
+	
 	sf::Font font;
 };

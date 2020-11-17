@@ -5,6 +5,7 @@
 #include "Board.h"
 #include "BackendBoard.h"
 #include "Piece.h"
+#include "Button.h"
 
 #pragma once
 class NineManGame
@@ -14,7 +15,7 @@ public:
 	static const int INVALID = -1, EMPTY = 0, WHITE = 1, BLACK = 2;		// array value definitions
 	static std::string getcolorString(int i);
 
-	void runWindow();
+	void runWindow(int goesFirst);
 	void changeTurn(int &currentTurn);
 	void displayTurn(int &currentTurn);
 	void declareWinner(char winner);
@@ -24,4 +25,5 @@ private:
 	sf::CircleShape dot;
 	sf::Texture bTexture;
 	sf::Sprite bSprite;
+	int turn;							// track player turn	
 };

@@ -4,6 +4,6 @@
 
 int main()
 {
-	NineManGame game;
-	game.runWindow();
+	StartWindow start;
+	start.runWindow();
 }

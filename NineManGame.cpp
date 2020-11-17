@@ -7,7 +7,7 @@ std::string NineManGame::getcolorString(int i) {
 	else { return "Black"; }
 }
 
-void NineManGame::runWindow() {
+void NineManGame::runWindow(int goesFirst) {
 	BackendBoard backend = BackendBoard();	// object for backend logic handling
 	
 	std::vector<Piece> white, black;		// vectors for both player's pieces
@@ -31,12 +31,11 @@ void NineManGame::runWindow() {
 	bool selected = false;				// track when piece is selected
 	char winner = 'n';					// track winner of the game
 	int selectedPiece;					// track which piece is selected
-	int turn;							// track player turn	
 	int whitePlacementCounter = 9;		// counter to know when placement phase is over
 	int blackPlacementCounter = 9;
 
 	// set initial turn from player input (use WHITE/BLACK constants from class header file)
-	turn = WHITE;
+	turn = goesFirst;
 
 	while (window.isOpen())
 	{			
@@ -92,7 +91,7 @@ void NineManGame::runWindow() {
 							}
 						}
 						else if (isRemovalPhase) {
-							for (int i = 0; i < black.size(); i++) {
+							for (int i = 0; i < white.size(); i++) {
 								if (white[i].pieceShape.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y)) {
 									if (white[i].isPlaced() && backend.canRemove(white[i].getBoardRow(), white[i].getBoardCol(), WHITE)) {
 										backend.updateBoard(white[i].getBoardRow(), white[i].getBoardCol(), EMPTY);
@@ -323,32 +322,52 @@ void NineManGame::declareWinner(char winner) {
 	playAgain.setOutlineThickness(3);
 	playAgain.setPosition(155, 280);
 
+	
+	Button yes("Yes", 50, 50, 218, 330, 28, sf::Color::Transparent);
+	/*
 	sf::Text yes("Yes", font, 28);
 	yes.setOutlineColor(sf::Color::Black);
 	yes.setOutlineThickness(3);
 	yes.setPosition(218, 330);
+	*/
 
+	Button no("No", 50, 50, 461, 330, 28, sf::Color::Transparent);
+	/*
 	sf::Text no("No", font, 28);
 	no.setOutlineColor(sf::Color::Black);
 	no.setOutlineThickness(3);
 	no.setPosition(461, 330);
+	*/
+
 	std::cout << "Ending the game." << std::endl;
 	switch (winner) {
 	case 'w':
 		window.draw(endGameOverlay);
 		window.draw(whiteVictory);
 		window.draw(playAgain);
-		window.draw(yes);
-		window.draw(no);
-		// still need to make "yes" and "no" clickable buttons
+		yes.draw(window);
+		no.draw(window);
 		break;
 	case 'b':
 		window.draw(endGameOverlay);
 		window.draw(blackVictory);
 		window.draw(playAgain);
-		window.draw(yes);
-		window.draw(no);
-		// still need to make "yes" and "no" clickable buttons
+		yes.draw(window);
+		no.draw(window);
 		break;
+	}
+	sf::Event event;
+	while (window.pollEvent(event)) {
+		if (event.type == sf::Event::Closed) {
+			window.close();
+		}
+		if (yes.clicked(event)) {
+			window.close();
+			NineManGame game;
+			game.runWindow(turn);
+		}
+		if (no.clicked(event)) {
+			window.close();
+		}
 	}
 }
