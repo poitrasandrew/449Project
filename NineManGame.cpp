@@ -27,15 +27,14 @@ void NineManGame::runWindow(int goesFirst) {
 
 	bool isPlacementPhase = true;		// track initial game phase
 	bool isRemovalPhase = false;		// track if a player can remove an opponent's piece
-	//bool gameOver = false;				// track when game ends
 	bool selected = false;				// track when piece is selected
 	char winner = 'n';					// track winner of the game
 	int selectedPiece;					// track which piece is selected
 	int whitePlacementCounter = 9;		// counter to know when placement phase is over
 	int blackPlacementCounter = 9;
 
-	// set initial turn from player input (use WHITE/BLACK constants from class header file)
-	turn = goesFirst;
+
+	turn = goesFirst;					// set initial turn from player input
 
 	while (window.isOpen())
 	{			
@@ -56,53 +55,21 @@ void NineManGame::runWindow(int goesFirst) {
 				if (event.mouseButton.button == sf::Mouse::Left) {
 					if (turn == WHITE) {
 						if (!isRemovalPhase) {
-							for (int i = 0; i < white.size(); i++) {
-								if (white[i].pieceShape.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y)) {
-									selected = true;
-									selectedPiece = i;
-									white[i].pieceShape.setOrigin(event.mouseButton.x - (white[i].pieceShape.getPosition().x - white[i].pieceShape.getOrigin().x),
-										event.mouseButton.y - (white[i].pieceShape.getPosition().y - white[i].pieceShape.getOrigin().y));
-								}
-							}
+							clickToMovePiece(white, event, selected, selectedPiece);
 						}
 						else if (isRemovalPhase) {
-							for (int i = 0; i < black.size(); i++) {
-								if (black[i].pieceShape.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y)) {
-									if (black[i].isPlaced() && backend.canRemove(black[i].getBoardRow(), black[i].getBoardCol(), BLACK)) {
-										backend.updateBoard(black[i].getBoardRow(), black[i].getBoardCol(), EMPTY);
-										black.erase(black.begin() + i);
-										isRemovalPhase = false;
-										changeTurn(turn);
-									}
-								}
-							}
-							break;
-						}
+							clickToRemovePiece(black, event, backend, isRemovalPhase, turn);
+							if (isRemovalPhase) { break; } // skip piece movement when piece to be removed is invalid (try again)
+						}									// (i.e. if it is still removal phase, break)
 					}
 					else if (turn == BLACK) {
 						if (!isRemovalPhase) {
-							for (int i = 0; i < black.size(); i++) {
-								if (black[i].pieceShape.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y)) {
-									selected = true;
-									selectedPiece = i;
-									black[i].pieceShape.setOrigin(event.mouseButton.x - (black[i].pieceShape.getPosition().x - black[i].pieceShape.getOrigin().x),
-										event.mouseButton.y - (black[i].pieceShape.getPosition().y - black[i].pieceShape.getOrigin().y));
-								}
-							}
+							clickToMovePiece(black, event, selected, selectedPiece);
 						}
 						else if (isRemovalPhase) {
-							for (int i = 0; i < white.size(); i++) {
-								if (white[i].pieceShape.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y)) {
-									if (white[i].isPlaced() && backend.canRemove(white[i].getBoardRow(), white[i].getBoardCol(), WHITE)) {
-										backend.updateBoard(white[i].getBoardRow(), white[i].getBoardCol(), EMPTY);
-										white.erase(white.begin() + i);
-										isRemovalPhase = false;
-										changeTurn(turn);
-									}
-								}
-							}
-							break;
-						}
+							clickToRemovePiece(white, event, backend, isRemovalPhase, turn);
+							if (isRemovalPhase) { break; } // skip piece movement when piece to be removed is invalid (try again)
+						}									// (i.e. if it is still removal phase, break)
 					}
 				}
 			}
@@ -110,118 +77,10 @@ void NineManGame::runWindow(int goesFirst) {
 			else if (event.type == sf::Event::MouseButtonReleased) {
 				if (event.mouseButton.button == sf::Mouse::Left) {
 					if (turn == WHITE) {
-						for (int i = 0; i < white.size(); i++) {
-							if (white[i].pieceShape.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y)) {
-								selected = !selected;		// stop dragging piece on mouse release
-								
-								if (!isRemovalPhase) {		// if removal phase, do not process as piece movement
-									white[i].convertTempCoordinates();
-
-									if (!backend.isvalidPosition(white[i].getTempRow(), white[i].getTempCol())) {
-										white[i].snapToOldPos();
-										break;
-									}
-
-									if (whitePlacementCounter > 0) {			// do not move pieces that have already been placed until placement phase is over
-										if (white[i].isPlaced()) {
-											white[i].snapToOldPos();
-											break;
-										}
-										if (!backend.isvalidPlacement(white[i].getTempRow(), white[i].getTempCol())) {
-											white[i].snapToOldPos();
-											break;
-										}
-										else {
-											white[i].convertCoordinates();
-											white[i].setPlaced();
-											white[i].snapToNewPos();
-											backend.updateBoard(white[i].getBoardRow(), white[i].getBoardCol(), WHITE);
-											whitePlacementCounter--;
-										}
-									}
-									else if (whitePlacementCounter <= 0) {
-										if(!backend.isValidMove(white[i].getBoardRow(), white[i].getBoardCol(), white[i].getTempRow(), white[i].getTempCol(), white.size())) {
-											white[i].snapToOldPos();
-											break;
-										}
-										else {
-											// update piece coordinates by passing the GUI coordinates to
-											backend.updateBoard(white[i].getBoardRow(), white[i].getBoardCol(), EMPTY);
-											white[i].convertCoordinates();
-											white[i].snapToNewPos();
-											backend.updateBoard(white[i].getBoardRow(), white[i].getBoardCol(), WHITE);
-										}
-									}
-
-									if (backend.formsMill(white[i].getBoardRow(), white[i].getBoardCol(), WHITE)) {
-										isRemovalPhase = true;
-										backend.printBoard();
-										break;
-									}
-									else {
-										changeTurn(turn);
-									}
-								}
-								
-								backend.printBoard();		// print updated backend board for console logging
-							}
-						}
+						onPieceRelease(white, event, selected, backend, isRemovalPhase, whitePlacementCounter, turn);
 					}
 					else if (turn == BLACK) {
-						for (int i = 0; i < black.size(); i++) {
-							if (black[i].pieceShape.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y)) {
-								selected = !selected;
-								if (!isRemovalPhase) {		// if removal phase, do not process as piece movement
-									black[i].convertTempCoordinates();
-
-									if (!backend.isvalidPosition(black[i].getTempRow(), black[i].getTempCol())) {
-										black[i].snapToOldPos();
-										break;
-									}
-
-									if (blackPlacementCounter > 0) {			// do not move pieces that have already been placed until placement phase is over
-										if (black[i].isPlaced()) {
-											black[i].snapToOldPos();
-											break;
-										}
-										if (!backend.isvalidPlacement(black[i].getTempRow(), black[i].getTempCol())) {
-											black[i].snapToOldPos();
-											break;
-										}
-										else {
-											black[i].convertCoordinates();
-											black[i].setPlaced();
-											black[i].snapToNewPos();
-											backend.updateBoard(black[i].getBoardRow(), black[i].getBoardCol(), BLACK);
-											blackPlacementCounter--;
-										}
-									}
-									else if (blackPlacementCounter <= 0) {
-										if (!backend.isValidMove(black[i].getBoardRow(), black[i].getBoardCol(), black[i].getTempRow(), black[i].getTempCol(), black.size())) {
-											black[i].snapToOldPos();
-											break;
-										}
-										else {
-											// update piece coordinates by passing the GUI coordinates to
-											backend.updateBoard(black[i].getBoardRow(), black[i].getBoardCol(), EMPTY);
-											black[i].convertCoordinates();
-											black[i].snapToNewPos();
-											backend.updateBoard(black[i].getBoardRow(), black[i].getBoardCol(), BLACK);
-										}
-									}
-
-									if (backend.formsMill(black[i].getBoardRow(), black[i].getBoardCol(), BLACK)) {
-										isRemovalPhase = true;
-										backend.printBoard();
-										break;
-									}
-									else {
-										changeTurn(turn);
-									}
-								}
-								backend.printBoard();		// print updated backend board for console logging
-							}
-						}
+						onPieceRelease(black, event, selected, backend, isRemovalPhase, blackPlacementCounter, turn);
 					}
 				}
 			}
@@ -259,6 +118,96 @@ void NineManGame::runWindow(int goesFirst) {
 		window.display();
 	}
 	return;
+}
+
+void NineManGame::clickToMovePiece(std::vector<Piece> &color, sf::Event event, bool &selected, int &selectedPiece) {
+	for (int i = 0; i < color.size(); i++) {
+		if (color[i].pieceShape.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y)) {
+			selected = true;
+			selectedPiece = i;
+			color[i].pieceShape.setOrigin(event.mouseButton.x - (color[i].pieceShape.getPosition().x - color[i].pieceShape.getOrigin().x),
+				event.mouseButton.y - (color[i].pieceShape.getPosition().y - color[i].pieceShape.getOrigin().y));
+		}
+	}
+}
+
+void NineManGame::clickToRemovePiece(std::vector<Piece> &color, sf::Event event, BackendBoard &backend, bool &isRemovalPhase, int &turn) {
+	for (int i = 0; i < color.size(); i++) {
+		if (color[i].pieceShape.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y)) {
+			if (color[i].isPlaced() && backend.canRemove(color[i].getBoardRow(), color[i].getBoardCol(), getOppositePlayer(turn))) {
+				backend.updateBoard(color[i].getBoardRow(), color[i].getBoardCol(), EMPTY);
+				color.erase(color.begin() + i);
+				isRemovalPhase = false;
+				changeTurn(turn);
+			}
+		}
+	}
+}
+
+int NineManGame::getOppositePlayer(int turn) {
+	if (turn == NineManGame::WHITE) {
+		return NineManGame::BLACK;
+	}
+	else { return NineManGame::WHITE; }
+}
+
+void NineManGame::onPieceRelease(std::vector<Piece> &color, sf::Event event, bool &selected, BackendBoard &backend, bool &isRemovalPhase, int &placementCounter, int &turn) {
+	for (int i = 0; i < color.size(); i++) {
+		if (color[i].pieceShape.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y)) {
+			selected = !selected;		// stop dragging piece on mouse release
+
+			if (!isRemovalPhase) {		// if removal phase, do not process as piece movement
+				color[i].convertTempCoordinates();
+
+				if (!backend.isvalidPosition(color[i].getTempRow(), color[i].getTempCol())) {
+					color[i].snapToOldPos();
+					break;
+				}
+
+				if (placementCounter > 0) {			// do not move pieces that have already been placed until placement phase is over
+					if (color[i].isPlaced()) {
+						color[i].snapToOldPos();
+						break;
+					}
+					if (!backend.isvalidPlacement(color[i].getTempRow(), color[i].getTempCol())) {
+						color[i].snapToOldPos();
+						break;
+					}
+					else {
+						color[i].convertCoordinates();
+						color[i].setPlaced();
+						color[i].snapToNewPos();
+						backend.updateBoard(color[i].getBoardRow(), color[i].getBoardCol(), turn);
+						placementCounter--;
+					}
+				}
+				else if (placementCounter <= 0) {
+					if (!backend.isValidMove(color[i].getBoardRow(), color[i].getBoardCol(), color[i].getTempRow(), color[i].getTempCol(), color.size())) {
+						color[i].snapToOldPos();
+						break;
+					}
+					else {
+						// update piece coordinates by passing the GUI coordinates to
+						backend.updateBoard(color[i].getBoardRow(), color[i].getBoardCol(), EMPTY);
+						color[i].convertCoordinates();
+						color[i].snapToNewPos();
+						backend.updateBoard(color[i].getBoardRow(), color[i].getBoardCol(), turn);
+					}
+				}
+
+				if (backend.formsMill(color[i].getBoardRow(), color[i].getBoardCol(), turn)) {
+					isRemovalPhase = true;
+					backend.printBoard();
+					break;
+				}
+				else {
+					changeTurn(turn);
+				}
+			}
+
+			backend.printBoard();		// print updated backend board for console logging
+		}
+	}
 }
 
 void NineManGame::changeTurn(int &currentTurn) {
