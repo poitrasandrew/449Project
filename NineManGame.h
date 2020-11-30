@@ -16,14 +16,16 @@ public:
 	static std::string getcolorString(int i);
 
 	void runWindow(int goesFirst);
+	void clickToMovePiece(std::vector<Piece> &color, sf::Event event, bool &selected, int &selectedPiece);
+	void clickToRemovePiece(std::vector<Piece> &oppColor, sf::Event event, BackendBoard &backend, bool &isRemovalPhase, int &turn);
+	int getOppositePlayer(int turn);
+	void onPieceRelease(std::vector<Piece> &color, sf::Event event, bool &selected, BackendBoard &backend, bool &isRemovalPhase, int &placementCounter, int &turn);
+	void computerMove(std::vector<Piece> &color, sf::Event event, bool &selected, int &selectedPiece, BackendBoard &backend, bool &isRemovalPhase, int &turn);
+			// TODO: need to implement, will call backend computer move, have backend coords assigned, and then update GUI
 	void changeTurn(int &currentTurn);
 	void displayTurn(int &currentTurn);
 	void declareWinner(char winner);
 private:
 	sf::RenderWindow window;
-	sf::RectangleShape square;
-	sf::CircleShape dot;
-	sf::Texture bTexture;
-	sf::Sprite bSprite;
 	int turn;							// track player turn	
 };

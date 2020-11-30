@@ -28,11 +28,11 @@ void FirstTurnWindow::runWindow() {
 				window.close();
 			if (white.clicked(event)) {
 				window.close();
-				game.runWindow(WHITE);
+				game.runWindow(NineManGame::WHITE);
 			}
 			if (black.clicked(event)) {
 				window.close();
-				game.runWindow(BLACK);
+				game.runWindow(NineManGame::BLACK);
 			}
 		}
 
