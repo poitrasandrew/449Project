@@ -13,6 +13,7 @@ public:
 	void printBoard();
 	bool isLoser(int pieceCount, int player);
 	bool loserDirectionCheck(int startRow, int startCol);
+	void findComputerMove(std::vector<Piece> &color, std::vector<Piece> &oppColor, bool &isRemovalPhase, int &placementCounter, int &turn);
 	BackendBoard();
 	~BackendBoard();
 private:

@@ -7,95 +7,94 @@ std::string NineManGame::getcolorString(int i) {
 	else { return "Black"; }
 }
 
-void NineManGame::runWindow(int goesFirst) {
-	BackendBoard backend = BackendBoard();	// object for backend logic handling
-	
-	std::vector<Piece> white, black;		// vectors for both player's pieces
-	for (int i = 0; i < 18; i = i + 2)
+void NineManGame::runWindow(int goesFirst, int gameplayType) {
+
+	backend = BackendBoard();			// backend init
+	for (int i = 0; i < 18; i = i + 2)	// piece vectors setup
 	{
 		white.push_back(Piece(15.f, (i + 1) * 20, 50, sf::Color::White));
 		black.push_back(Piece(15.f, (i + 1) * 20, 17, sf::Color(20, 20, 20, 255)));   // Color is slightly lighter than black to improve visibility of the pieces
 	}
-
-	Board gameBoard("board.png", "theimage.ttf");						// board setup
-	window.create(sf::VideoMode(720, 720), "Nine Men's Morris");
-	window.setFramerateLimit(60);
-
+	Board gameBoard("board.png", "theimage.ttf");						// GUI board setup
 	sf::RectangleShape gameBackground(sf::Vector2f(720.f, 720.f));		// Create a solid color background that will go behind the game board
 	gameBackground.setFillColor(sf::Color(140, 140, 140, 255));
 	gameBackground.setPosition(sf::Vector2f(0.f, 0.f));
+	window.create(sf::VideoMode(720, 720), "Nine Men's Morris");		// window settings
+	window.setFramerateLimit(60);
 
-	bool isPlacementPhase = true;		// track initial game phase
-	bool isRemovalPhase = false;		// track if a player can remove an opponent's piece
-	bool selected = false;				// track when piece is selected
-	char winner = 'n';					// track winner of the game
-	int selectedPiece;					// track which piece is selected
-	int whitePlacementCounter = 9;		// counter to know when placement phase is over
-	int blackPlacementCounter = 9;
-
-
+	gameType = gameplayType;			// set game type to single/two player
 	turn = goesFirst;					// set initial turn from player input
 
 	while (window.isOpen())
-	{			
+	{
 		if (whitePlacementCounter <= 0 && blackPlacementCounter <= 0) {		// enter movement phase once all pieces have been initially placed
 			isPlacementPhase = false;
 		}
-		
 
-		sf::Event event;
-		while (window.pollEvent(event))
-		{
-			//end loop when window closes
-			if (event.type == sf::Event::Closed) {
-				window.close();
+		if (isComputerTurn) {			// computer move handling
+			Sleep(500);					// sleep thread for half a second to emulate real decision making
+			if (turn == WHITE) {
+				computerMove(white, black, backend, isRemovalPhase, whitePlacementCounter, turn);
 			}
-			//changes origin of the moved dot to make dragging more intuitive on left click
-			else if (event.type == sf::Event::MouseButtonPressed) {
-				if (event.mouseButton.button == sf::Mouse::Left) {
-					if (turn == WHITE) {
-						if (!isRemovalPhase) {
-							clickToMovePiece(white, event, selected, selectedPiece);
-						}
-						else if (isRemovalPhase) {
-							clickToRemovePiece(black, event, backend, isRemovalPhase, turn);
-							if (isRemovalPhase) { break; } // skip piece movement when piece to be removed is invalid (try again)
-						}									// (i.e. if it is still removal phase, break)
-					}
-					else if (turn == BLACK) {
-						if (!isRemovalPhase) {
-							clickToMovePiece(black, event, selected, selectedPiece);
-						}
-						else if (isRemovalPhase) {
-							clickToRemovePiece(white, event, backend, isRemovalPhase, turn);
-							if (isRemovalPhase) { break; } // skip piece movement when piece to be removed is invalid (try again)
-						}									// (i.e. if it is still removal phase, break)
-					}
-				}
+			else {
+				computerMove(black, white, backend, isRemovalPhase, blackPlacementCounter, turn);
 			}
-
-			else if (event.type == sf::Event::MouseButtonReleased) {
-				if (event.mouseButton.button == sf::Mouse::Left) {
-					if (turn == WHITE) {
-						onPieceRelease(white, event, selected, backend, isRemovalPhase, whitePlacementCounter, turn);
-					}
-					else if (turn == BLACK) {
-						onPieceRelease(black, event, selected, backend, isRemovalPhase, blackPlacementCounter, turn);
-					}
-				}
-			}
-
-			//move the dot around when one has been selected
-			if (selected) {
-				if (turn == WHITE) {
-					white[selectedPiece].pieceShape.setPosition(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y);
-				}
-				else {
-					black[selectedPiece].pieceShape.setPosition(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y);
-				}
-			}
+			backend.printBoard();
 		}
+		else {							// human move handling
+			sf::Event event;
+			while (window.pollEvent(event))
+			{
+				//end loop when window closes
+				if (event.type == sf::Event::Closed) {
+					window.close();
+				}
+				//changes origin of the moved dot to make dragging more intuitive on left click
+				else if (event.type == sf::Event::MouseButtonPressed) {
+					if (event.mouseButton.button == sf::Mouse::Left) {
+						if (turn == WHITE) {
+							if (!isRemovalPhase) {
+								clickToMovePiece(white, event, selected, selectedPiece);
+							}
+							else if (isRemovalPhase) {
+								clickToRemovePiece(black, event, backend, isRemovalPhase, turn);
+								if (isRemovalPhase) { break; } // skip piece movement when piece to be removed is invalid (try again)
+							}									// (i.e. if it is still removal phase, break)
+						}
+						else if (turn == BLACK) {
+							if (!isRemovalPhase) {
+								clickToMovePiece(black, event, selected, selectedPiece);
+							}
+							else if (isRemovalPhase) {
+								clickToRemovePiece(white, event, backend, isRemovalPhase, turn);
+								if (isRemovalPhase) { break; } // skip piece movement when piece to be removed is invalid (try again)
+							}									// (i.e. if it is still removal phase, break)
+						}
+					}
+				}
 
+				else if (event.type == sf::Event::MouseButtonReleased) {
+					if (event.mouseButton.button == sf::Mouse::Left) {
+						if (turn == WHITE) {
+							onPieceRelease(white, event, selected, backend, isRemovalPhase, whitePlacementCounter, turn);
+						}
+						else if (turn == BLACK) {
+							onPieceRelease(black, event, selected, backend, isRemovalPhase, blackPlacementCounter, turn);
+						}
+					}
+				}
+
+				//move the dot around when one has been selected
+				if (selected) {
+					if (turn == WHITE) {
+						white[selectedPiece].pieceShape.setPosition(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y);
+					}
+					else {
+						black[selectedPiece].pieceShape.setPosition(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y);
+					}
+				}
+			}
+	}
 		window.clear();
 
 		window.draw(gameBackground);
@@ -138,7 +137,7 @@ void NineManGame::clickToRemovePiece(std::vector<Piece> &color, sf::Event event,
 				backend.updateBoard(color[i].getBoardRow(), color[i].getBoardCol(), EMPTY);
 				color.erase(color.begin() + i);
 				isRemovalPhase = false;
-				changeTurn(turn);
+				changeTurn(turn, gameType, isComputerTurn);
 			}
 		}
 	}
@@ -163,7 +162,6 @@ void NineManGame::onPieceRelease(std::vector<Piece> &color, sf::Event event, boo
 					color[i].snapToOldPos();
 					break;
 				}
-
 				if (placementCounter > 0) {			// do not move pieces that have already been placed until placement phase is over
 					if (color[i].isPlaced()) {
 						color[i].snapToOldPos();
@@ -201,7 +199,7 @@ void NineManGame::onPieceRelease(std::vector<Piece> &color, sf::Event event, boo
 					break;
 				}
 				else {
-					changeTurn(turn);
+					changeTurn(turn, gameType, isComputerTurn);
 				}
 			}
 
@@ -210,7 +208,7 @@ void NineManGame::onPieceRelease(std::vector<Piece> &color, sf::Event event, boo
 	}
 }
 
-void NineManGame::changeTurn(int &currentTurn) {
+void NineManGame::changeTurn(int &currentTurn, int gameType, bool &computerTurn) {
 	if (currentTurn == WHITE) {
 		currentTurn = BLACK;
 	}
@@ -218,6 +216,10 @@ void NineManGame::changeTurn(int &currentTurn) {
 		currentTurn = WHITE;
 	}
 	std::cout << "It is currently " << NineManGame::getcolorString(currentTurn) << "'s turn." << std::endl;
+
+	if (gameType == SINGLE_PLAYER) {
+		computerTurn = !computerTurn;
+	}
 }
 
 void NineManGame::displayTurn(int &currentTurn) {
@@ -273,20 +275,8 @@ void NineManGame::declareWinner(char winner) {
 
 	
 	Button yes("Yes", 50, 50, 218, 330, 28, sf::Color::Transparent);
-	/*
-	sf::Text yes("Yes", font, 28);
-	yes.setOutlineColor(sf::Color::Black);
-	yes.setOutlineThickness(3);
-	yes.setPosition(218, 330);
-	*/
 
 	Button no("No", 50, 50, 461, 330, 28, sf::Color::Transparent);
-	/*
-	sf::Text no("No", font, 28);
-	no.setOutlineColor(sf::Color::Black);
-	no.setOutlineThickness(3);
-	no.setPosition(461, 330);
-	*/
 
 	std::cout << "Ending the game." << std::endl;
 	switch (winner) {
@@ -313,10 +303,19 @@ void NineManGame::declareWinner(char winner) {
 		if (yes.clicked(event)) {
 			window.close();
 			NineManGame game;
-			game.runWindow(turn);
+			game.runWindow(turn, gameType);
 		}
 		if (no.clicked(event)) {
 			window.close();
 		}
+	}
+}
+
+void NineManGame::computerMove(std::vector<Piece> &color, std::vector<Piece> &oppColor, BackendBoard &backend, bool &isRemovalPhase, int &placementCounter, int &turn) {
+	backend.findComputerMove(color, oppColor, isRemovalPhase, placementCounter, turn);		// finds move and updates GUI
+			// TODO: let this method update GUI instead of backend
+
+	if (!isRemovalPhase) {									// if computer did not form a mill, change the turn
+		changeTurn(turn, gameType, isComputerTurn);			// otherwise, wait for next loop iteration to remove a piece and complete turn
 	}
 }

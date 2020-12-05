@@ -8,11 +8,14 @@ void Piece::setCoordinates() {
 
 }
 
-void Piece::setTempCoordinates(int tempX, int tempY) {
-	//tempXCoord = tempX;
-	//tempYCoord = tempY;
+void Piece::setTempCoordinates(int tempR, int tempC) {
+	tempRow = tempR;
+	tempCol = tempC;
+}
 
-	// TODO: convert to and set temp backend coordinates as well, ensure row/columns match y/x
+void Piece::setBoardCoordinates(int row, int col) {
+	BoardRow = row;
+	BoardCol = col;
 }
 
 bool Piece::isPlaced() {
