@@ -8,7 +8,7 @@ FirstTurnWindow::~FirstTurnWindow() {
 
 }
 
-void FirstTurnWindow::runWindow() {
+void FirstTurnWindow::runWindow(int gameType) {
 	window.create(sf::VideoMode(400.f, 300.f), "Who Goes First?");
 	window.setFramerateLimit(60);
 
@@ -28,11 +28,11 @@ void FirstTurnWindow::runWindow() {
 				window.close();
 			if (white.clicked(event)) {
 				window.close();
-				game.runWindow(NineManGame::WHITE);
+				game.runWindow(NineManGame::WHITE, gameType);
 			}
 			if (black.clicked(event)) {
 				window.close();
-				game.runWindow(NineManGame::BLACK);
+				game.runWindow(NineManGame::BLACK, gameType);
 			}
 		}
 

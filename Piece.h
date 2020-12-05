@@ -12,7 +12,8 @@ public:
 	sf::CircleShape pieceShapeGenerator(float size, float i, float j, sf::Color color);
 	static void drawPieces(sf::RenderWindow& window, std::vector<Piece> &pieces);
 	void setCoordinates();
-	void setTempCoordinates(int tempX, int tempY);
+	void setTempCoordinates(int tempR, int tempC);
+	void setBoardCoordinates(int row, int col);
 	void convertCoordinates();
 	void convertTempCoordinates();
 	void snapToNewPos();

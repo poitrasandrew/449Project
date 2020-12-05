@@ -8,7 +8,7 @@ class FirstTurnWindow {
 public:
 	FirstTurnWindow();
 	~FirstTurnWindow();
-	void runWindow();
+	void runWindow(int gameType);
 
 private:
 	sf::RenderWindow window;

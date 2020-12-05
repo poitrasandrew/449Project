@@ -2,6 +2,8 @@
 #include "NineManGame.h"
 #include <iostream>
 #include <iomanip>
+#include <cstdlib>
+#include <ctime>
 
 bool BackendBoard::formsMill(int startRow, int startCol, int player) {
 	// function to traverse array from given position in each direction to search for mill
@@ -263,8 +265,89 @@ bool BackendBoard::loserDirectionCheck(int startRow, int startCol) {
 		}
 	}
 
-	
+
 	return true;			// if no valid moves, player is loser
+}
+
+void BackendBoard::findComputerMove(std::vector<Piece> &color, std::vector<Piece> &oppColor, bool &isRemovalPhase, int &placementCounter, int &turn) {
+	// for placement, loop through to see if it can form mill, else, choose random spot
+	// for movement, loop through each piece to see if a valid move can form a mill, else make a random move
+	// for removing a piece, choose the first one that can be removed
+
+	int randomRow = (rand() % (NineManGame::ROWMAX - 1)) + NineManGame::ROWMIN;
+	int randomCol = (rand() % (NineManGame::COLMAX - 1)) + NineManGame::COLMIN;
+	int randomIndex = (rand() % (color.size() - 1)) + 0;
+
+	if (isRemovalPhase) {							// removal phase
+		for (int i = 0; i < oppColor.size(); i++) {
+			if (oppColor[i].isPlaced() && canRemove(oppColor[i].getBoardRow(), oppColor[i].getBoardCol(), NineManGame::getOppositePlayer(turn))) {
+				updateBoard(oppColor[i].getBoardRow(), oppColor[i].getBoardCol(), NineManGame::EMPTY);
+				oppColor.erase(oppColor.begin() + i);			// loop through opponent's pieces to find one that can be removed and remove it
+				isRemovalPhase = false;
+				return;
+			}
+		}
+	}
+
+	if (placementCounter > 0) {						// placement phase
+		for (int i = 0; i < NineManGame::ROWMAX; i++) {
+			for (int j = 0; j < NineManGame::COLMAX; j++) {
+				if (isvalidPosition(i, j) && isvalidPlacement(i, j) && formsMill(i, j, turn)) {		// if placement forms mill, place piece there
+					color[placementCounter-1].setBoardCoordinates(i, j);
+					color[placementCounter-1].setPlaced();
+					color[placementCounter-1].snapToNewPos();
+					isRemovalPhase = true;
+					updateBoard(color[placementCounter-1].getBoardRow(), color[placementCounter-1].getBoardCol(), turn);
+					placementCounter--;
+					return;
+				}
+			}
+		}																	// otherwise, make random placement
+		while (!(isvalidPosition(randomRow, randomCol) && isvalidPlacement(randomRow, randomCol))) {
+			randomRow = (rand() % (NineManGame::ROWMAX - 1)) + NineManGame::ROWMIN;
+			randomCol = (rand() % (NineManGame::COLMAX - 1)) + NineManGame::COLMIN;
+		}
+		color[placementCounter-1].setBoardCoordinates(randomRow, randomCol);
+		color[placementCounter-1].setPlaced();
+		color[placementCounter-1].snapToNewPos();
+		updateBoard(color[placementCounter-1].getBoardRow(), color[placementCounter-1].getBoardCol(), turn);
+		placementCounter--;
+		return;
+	}
+	else if (placementCounter <= 0) {					// movement phase
+			// for movement, loop through each piece to see if a valid move can form a mill, else make a random move
+		for (int i = 0; i < NineManGame::ROWMAX; i++) {
+			for (int j = 0; j < NineManGame::COLMAX; j++) {		// loop through backend board
+				if (isvalidPosition(randomRow, randomCol) && formsMill(i, j, turn)) {					// if a mill can be formed, see if a piece can be moved there
+					for (int p = 0; p < color.size(); p++) {	// if so, move it there
+						if (isValidMove(color[p].getBoardRow(), color[p].getBoardCol(), i, j, color.size())) {
+							updateBoard(color[p].getBoardRow(), color[p].getBoardCol(), NineManGame::EMPTY);
+							color[p].setBoardCoordinates(i, j);
+							color[p].snapToNewPos();
+							updateBoard(color[p].getBoardRow(), color[p].getBoardCol(), turn);
+
+							if (formsMill(color[p].getBoardRow(), color[p].getBoardCol(), turn)) {		// verify that a mill was formed
+								isRemovalPhase = true;												
+							}
+							return;
+						}
+					}
+				}
+			}
+		}														// else, make a random move
+		while (!(isvalidPosition(randomRow, randomCol) && isValidMove(color[randomIndex].getBoardRow(), color[randomIndex].getBoardCol(), randomRow, randomCol, color.size()))) {	// find a random valid move for that piece
+			std::cout << "Invalid Random Move." << std::endl;				// find a random piece that can be moved to a random position
+			randomIndex = (rand() % (color.size() - 1)) + 0;
+			randomRow = (rand() % (NineManGame::ROWMAX - 1)) + NineManGame::ROWMIN;
+			randomCol = (rand() % (NineManGame::COLMAX - 1)) + NineManGame::COLMIN;
+		}
+		updateBoard(color[randomIndex].getBoardRow(), color[randomIndex].getBoardCol(), NineManGame::EMPTY);		// make the random move
+		color[randomIndex].setBoardCoordinates(randomRow, randomCol);
+		color[randomIndex].snapToNewPos();
+		isRemovalPhase = false; 
+		updateBoard(color[randomIndex].getBoardRow(), color[randomIndex].getBoardCol(), turn);
+		return;
+	}
 }
 
 void BackendBoard::updateBoard(int row, int col, int val) {
@@ -285,6 +368,7 @@ void BackendBoard::printBoard() {		//utility function to visualize backend logic
 
 BackendBoard::BackendBoard() {
 	std::cout << "Backend Board Created." << std::endl;
+	srand((unsigned)time(0));		// init pseudo-random number generator
 	printBoard();	// show initial board
 }
 
