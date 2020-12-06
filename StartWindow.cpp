@@ -28,7 +28,12 @@ void StartWindow::runWindow() {
 			if (pvpButton.clicked(event)) {
 				window.close();
 				FirstTurnWindow ftw;
-				ftw.runWindow();
+				ftw.runWindow(2);
+			}
+			if (pveButton.clicked(event)) {
+				window.close();
+				FirstTurnWindow ftw;
+				ftw.runWindow(1);
 			}
 		}
 
