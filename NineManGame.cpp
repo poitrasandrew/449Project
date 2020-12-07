@@ -1,7 +1,7 @@
 #include "NineManGame.h"
 
-std::string NineManGame::getcolorString(int i) {
-	if (i == WHITE) {
+std::string NineManGame::getcolorString(int color) {
+	if (color == WHITE) {
 		return "White";
 	}
 	else { return "Black"; }
@@ -10,8 +10,7 @@ std::string NineManGame::getcolorString(int i) {
 void NineManGame::runWindow(int goesFirst, int gameplayType) {
 
 	backend = BackendBoard();			// backend init
-	for (int i = 0; i < 18; i = i + 2)	// piece vectors setup
-	{
+	for (int i = 0; i < 18; i = i + 2) {	// piece vectors setup
 		white.push_back(Piece(15.f, (i + 1) * 20, 50, sf::Color::White));
 		black.push_back(Piece(15.f, (i + 1) * 20, 17, sf::Color(20, 20, 20, 255)));   // Color is slightly lighter than black to improve visibility of the pieces
 	}
@@ -25,8 +24,7 @@ void NineManGame::runWindow(int goesFirst, int gameplayType) {
 	gameType = gameplayType;			// set game type to single/two player
 	turn = goesFirst;					// set initial turn from player input
 
-	while (window.isOpen())
-	{
+	while (window.isOpen()) {
 		if (whitePlacementCounter <= 0 && blackPlacementCounter <= 0) {		// enter movement phase once all pieces have been initially placed
 			isPlacementPhase = false;
 		}
@@ -43,8 +41,7 @@ void NineManGame::runWindow(int goesFirst, int gameplayType) {
 		}
 		else {							// human move handling
 			sf::Event event;
-			while (window.pollEvent(event))
-			{
+			while (window.pollEvent(event)) {
 				//end loop when window closes
 				if (event.type == sf::Event::Closed) {
 					window.close();

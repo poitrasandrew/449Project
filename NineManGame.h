@@ -9,13 +9,12 @@
 #include "Button.h"
 
 #pragma once
-class NineManGame
-{
+class NineManGame {
 public:
 	static const int ROWMAX = 7, COLMAX = 7, ROWMIN = 0, COLMIN = 0;	// edge array positions
 	static const int INVALID = -1, EMPTY = 0, WHITE = 1, BLACK = 2;		// array value definitions
 	static const int SINGLE_PLAYER = 1, TWO_PLAYER = 2;					// game type definitions
-	static std::string getcolorString(int i);
+	static std::string getcolorString(int color);
 
 	void runWindow(int goesFirst, int gameplayType);
 	void clickToMovePiece(std::vector<Piece> &color, sf::Event event, bool &selected, int &selectedPiece);

@@ -28,12 +28,12 @@ void StartWindow::runWindow() {
 			if (pvpButton.clicked(event)) {
 				window.close();
 				FirstTurnWindow ftw;
-				ftw.runWindow(2);
+				ftw.runWindow(NineManGame::TWO_PLAYER);
 			}
 			if (pveButton.clicked(event)) {
 				window.close();
 				FirstTurnWindow ftw;
-				ftw.runWindow(1);
+				ftw.runWindow(NineManGame::SINGLE_PLAYER);
 			}
 		}
 
